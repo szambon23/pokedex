@@ -1,0 +1,7 @@
+spring:
+  application:
+    name: pokedex
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate

@@ -1,0 +1,14 @@
+services:
+  postgres:
+    image: 'postgres:18'
+    environment:
+      POSTGRES_DB: pokedex
+      POSTGRES_USER: pokedex
+      POSTGRES_PASSWORD: pokedex
+    ports:
+      - '5433:5432'
+    volumes:
+      - pokedex-data:/var/lib/postgresql
+
+volumes:
+  pokedex-data:
