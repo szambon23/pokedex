@@ -5,6 +5,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import java.util.Objects;
+
 @Entity
 @Table(name = "type")
 @Getter
@@ -19,5 +21,16 @@ public class Type {
 
     public Type(String name) {
         this.name = name;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (!(o instanceof Type type)) return false;
+        return Objects.equals(name, type.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(name);
     }
 }

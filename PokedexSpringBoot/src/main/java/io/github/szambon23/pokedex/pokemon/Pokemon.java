@@ -1,4 +1,4 @@
-package pokemon;
+package io.github.szambon23.pokedex.pokemon;
 
 import io.github.szambon23.pokedex.type.Type;
 import jakarta.persistence.*;
@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "pokemon")
@@ -39,22 +40,30 @@ public class Pokemon {
     @OrderColumn(name = "slot_index")
     private List<Type> types = new ArrayList<>();
 
-    public Pokemon (int pokedexNumber, String name, int heightDecimeters,
-                    int weightHectograms, String spriteUrl, BaseStats stats) {
+    public Pokemon(int pokedexNumber, String name, int heightDecimeters,
+                    int weightHectograms, String spriteUrl, BaseStats stats,Type primaryType) {
         this.pokedexNumber = pokedexNumber;
         this.name = name;
         this.heightDecimeters = heightDecimeters;
         this.weightHectograms = weightHectograms;
         this.spriteUrl = spriteUrl;
         this.stats = stats;
+        Objects.requireNonNull(primaryType, "primaryType must not be null");
+        this.types.add(primaryType);
     }
 
-    public void addType(Type type) {
-        if (types.size() >= MAX_TYPES) {
-            throw new IllegalStateException("A Pokémon can have at most " + MAX_TYPES + " types");
+    public Pokemon(int pokedexNumber, String name, int heightDecimeters,
+                    int weightHectograms, String spriteUrl, BaseStats stats, Type primaryType, Type secondaryType) {
+
+        this(pokedexNumber, name, heightDecimeters, weightHectograms, spriteUrl, stats, primaryType);
+
+        Objects.requireNonNull(secondaryType, "secondaryType must not be null");
+        if (Objects.equals(secondaryType, primaryType)) {
+            throw new IllegalArgumentException("primaryType and secondaryType must be different");
         }
-        types.add(type);
+        this.types.add(secondaryType);
     }
+
 
     public List<Type> getTypes() {
         return Collections.unmodifiableList(types);

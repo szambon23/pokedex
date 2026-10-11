@@ -22,8 +22,10 @@ CREATE TABLE pokemon_type (
                     pokemon_id BIGINT  NOT NULL REFERENCES pokemon (id) ON DELETE CASCADE,
                     type_id    BIGINT  NOT NULL REFERENCES type (id),
                     slot_index INTEGER NOT NULL,
-                    PRIMARY KEY (pokemon_id, slot_index)
+                    PRIMARY KEY (pokemon_id, slot_index),
+                    CONSTRAINT chk_pokemon_type_max_types CHECK (slot_index BETWEEN 0 AND 1)
 );
 
 -- PostgreSQL no indexa las foreign keys automáticamente
 CREATE INDEX idx_pokemon_type_type_id ON pokemon_type (type_id);
+

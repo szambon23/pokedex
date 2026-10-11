@@ -1,4 +1,4 @@
-package pokemon;
+package io.github.szambon23.pokedex.pokemon;
 
 import jakarta.persistence.Embeddable;
 
