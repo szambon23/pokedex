@@ -6,18 +6,13 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Entity
 @Table(name = "pokemon")
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 public class Pokemon {
-
-    private static final int MAX_TYPES = 2;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -58,14 +53,26 @@ public class Pokemon {
         this(pokedexNumber, name, heightDecimeters, weightHectograms, spriteUrl, stats, primaryType);
 
         Objects.requireNonNull(secondaryType, "secondaryType must not be null");
+
         if (Objects.equals(secondaryType, primaryType)) {
             throw new IllegalArgumentException("primaryType and secondaryType must be different");
         }
         this.types.add(secondaryType);
     }
 
+    public Type getPrimaryType(){
+        return this.types.getFirst();
+    }
+
+    public Optional<Type> getSecondaryType(){
+        if (this.types.size() > 1) {
+            return Optional.of(types.get(1));
+        }else {
+            return Optional.empty();
+        }
+    }
 
     public List<Type> getTypes() {
-        return Collections.unmodifiableList(types);
+        return Collections.unmodifiableList(this.types);
     }
 }
