@@ -12,14 +12,14 @@ public class PokemonTest {
     BaseStats pikachuBaseStats = new BaseStats(35, 55, 40, 50, 50, 90);
 
     String bulbasaurName = "bulbasaur";
-    Type plantType = new Type("grass");
+    Type grassType = new Type("grass");
     Type poisonType = new Type("poison");
     BaseStats bulbasaurBaseStats = new BaseStats(45, 49, 49, 65, 65, 45);
 
 
 
     Pokemon pikachu = new Pokemon(25, pikachuName, 4, 60, "notBeingTested", pikachuBaseStats, electicType);
-    Pokemon bulbasuar = new Pokemon(1, bulbasaurName, 7, 69, "notBeingTested", bulbasaurBaseStats, plantType, poisonType);
+    Pokemon bulbasuar = new Pokemon(1, bulbasaurName, 7, 69, "notBeingTested", bulbasaurBaseStats, grassType, poisonType);
 
 
     @Test
@@ -49,6 +49,13 @@ public class PokemonTest {
     public void rejectsListTypeModifying(){
         assertThatThrownBy(() -> bulbasuar.getTypes().add(electicType))
                 .isInstanceOf(UnsupportedOperationException.class);
+    }
+
+    @Test
+    public void rejectsEqualPrimarySecondaryType(){
+        assertThatThrownBy(() -> new Pokemon(1, bulbasaurName, 7, 69, "notBeingTested", bulbasaurBaseStats, grassType, grassType))
+                .isInstanceOf(IllegalArgumentException.class)
+                .hasMessage("primaryType and secondaryType must be different");
     }
 
 
