@@ -75,4 +75,9 @@ public class Pokemon {
     public List<Type> getTypes() {
         return Collections.unmodifiableList(this.types);
     }
+
+    public String toString() {
+        return id.toString() + "#" + pokedexNumber + name;
+    }
+
 }
