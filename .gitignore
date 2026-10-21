@@ -1,0 +1,3 @@
+# Configuración personal de los editores, solo en la raíz del monorepo
+/.vscode/
+/.idea/
