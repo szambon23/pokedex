@@ -13,6 +13,7 @@ import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExcep
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     private static final Logger log = LoggerFactory.getLogger(GlobalExceptionHandler.class);
+
     @ExceptionHandler(PokemonNotFoundException.class)
     public ProblemDetail handlePokemonNotFound(PokemonNotFoundException ex) {
         ProblemDetail problemDetail =
@@ -21,6 +22,7 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problemDetail.setProperty("pokedexNumber", ex.getPokedexNumber());
         return problemDetail;
     }
+
     @ExceptionHandler(PropertyReferenceException.class)
     public ProblemDetail handlePropertyReference(PropertyReferenceException ex) {
         String detail = "Cannot sort by '" + ex.getPropertyName() + "': unknown property";
