@@ -10,6 +10,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
+import java.util.function.Supplier;
 
 @Service
 @Transactional(readOnly = true)
@@ -22,9 +23,10 @@ public class PokemonService {
         this.pokemonMapper = pokemonMapper;
     }
 
-    public Optional<PokemonResponse> findByPokedexNumber(int pokedexNumber){
+    public PokemonResponse findByPokedexNumber(int pokedexNumber){
         return pokemonRepository.findByPokedexNumber(pokedexNumber)
-                .map(pokemonMapper::toResponse);
+                .map(pokemonMapper::toResponse)
+                .orElseThrow(() -> new PokemonNotFoundException(pokedexNumber));
     }
 
     public PageResponse<PokemonSummary> findAll(Pageable pageable){
