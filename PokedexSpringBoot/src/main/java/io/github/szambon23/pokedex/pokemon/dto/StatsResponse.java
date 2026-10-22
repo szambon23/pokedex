@@ -1,11 +1,13 @@
 package io.github.szambon23.pokedex.pokemon.dto;
 
+import io.swagger.v3.oas.annotations.media.Schema;
+
 public record StatsResponse(
-        int hp,
-        int attack,
-        int defense,
-        int specialAttack,
-        int specialDefense,
-        int speed
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) int hp,
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) int attack,
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) int defense,
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) int specialAttack,
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) int specialDefense,
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) int speed
 ) {
 }
