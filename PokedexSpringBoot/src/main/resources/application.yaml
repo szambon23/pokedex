@@ -9,3 +9,6 @@ spring:
     web:
       pageable:
         max-page-size: 100
+
+springdoc:
+  default-produces-media-type: application/json
