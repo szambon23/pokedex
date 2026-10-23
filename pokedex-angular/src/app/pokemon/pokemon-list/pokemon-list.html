@@ -1,0 +1,14 @@
+@if (pokemons.isLoading()) {
+  <p>Cargando...</p>
+} @else if (pokemons.error()) {
+  <p>No se pudieron cargar los Pokémon.</p>
+} @else {
+  <section class="pokemon-grid">
+    @for (pokemon of pokemons.value()?.content ?? []; track pokemon.pokedexNumber) {
+      <article>{{ pokemon.name }}</article>
+    } @empty {
+      <p>No hay Pokémon.</p>
+    }
+  </section>
+}
+
