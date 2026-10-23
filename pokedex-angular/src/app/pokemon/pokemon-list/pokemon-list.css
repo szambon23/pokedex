@@ -1,5 +1,73 @@
 .pokemon-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
-    gap: 1rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+}
+
+.pokemon-card {
+  border: 1px solid #ddd;
+  padding: 1rem;
+  border-radius: 12px;
+  color: black;
+  text-align: center;
+}
+
+.pokemon-name {
+  text-transform: capitalize;
+}
+
+.pokemon-card img {
+  width: 100%;
+}
+
+.type {
+  text-transform: capitalize;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+.type-fire {
+  background-color: red;
+}
+
+.type-electric {
+  color: black;
+  background-color: yellow;
+}
+
+.type-poison {
+  background-color: purple;
+}
+
+.type-grass {
+  background-color: green;
+}
+
+.type-water {
+  background-color: #00bfff;
+}
+
+.type-flying {
+  color: black;
+  background-color: #9fc5e8;
+}
+
+.pokemon-number {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.sprite-placeholder {
+  aspect-ratio: 1; /* cuadrado, como los artworks */
+  display: flex;
+  align-items: center; /* centra vertical */
+  justify-content: center; /* centra horizontal */
+  background-color: #eee;
+  border-radius: 8px;
+  font-size: 3rem;
+  color: #999;
 }

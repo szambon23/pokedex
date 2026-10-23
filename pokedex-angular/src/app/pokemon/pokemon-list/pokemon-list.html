@@ -5,10 +5,24 @@
 } @else {
   <section class="pokemon-grid">
     @for (pokemon of pokemons.value()?.content ?? []; track pokemon.pokedexNumber) {
-      <article>{{ pokemon.name }}</article>
+      <article class="pokemon-card">
+        @if (pokemon.spriteUrl) {
+          <img [src]="pokemon.spriteUrl" [alt]="pokemon.name" />
+        } @else {
+          <img src="pokeball.png" alt="Sin imagen disponible" />
+        }
+
+        <span class="pokemon-number">{{ pokemon.pokedexNumber | pokedexNumber }}</span>
+        <h2 class="pokemon-name">{{ pokemon.name }}</h2>
+
+        <div class="pokemon-types">
+          @for (type of pokemon.types; track type) {
+            <span class="type type-{{ type }}">{{ type }}</span>
+          }
+        </div>
+      </article>
     } @empty {
       <p>No hay Pokémon.</p>
     }
   </section>
 }
-
