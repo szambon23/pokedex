@@ -1,1 +1,37 @@
-/* You can add global styles to this file, and also import other style files */
+/* Base de toda la app */
+body {
+  font-family: system-ui, sans-serif;
+  margin: 1rem;
+}
+
+/* Número y nombre: se usan en la lista y en el detalle */
+.pokemon-number {
+  color: #888;
+  font-size: 0.9rem;
+}
+
+.pokemon-name {
+  text-transform: capitalize;
+}
+
+/* Contenedor de tipos: acá va el flex */
+.pokemon-types {
+  display: flex;
+  gap: 4px;
+  justify-content: center;
+}
+
+/* Cada pastilla de tipo */
+.type {
+  text-transform: capitalize;
+  color: white;
+  padding: 2px 8px;
+  border-radius: 12px;
+}
+
+.type-fire     { background-color: red; }
+.type-poison   { background-color: purple; }
+.type-grass    { background-color: green; }
+.type-water    { background-color: #00bfff; }
+.type-electric { background-color: yellow; color: black; }
+.type-flying   { background-color: #9fc5e8; color: black; }

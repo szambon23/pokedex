@@ -1,0 +1,46 @@
+<a routerLink="/">← Volver</a>
+
+
+@if (pokemon.isLoading()) {
+<p>Loading...</p>
+} @else if (pokemon.hasValue()) {
+@let detail = pokemon.value();
+<article class="pokemon-detail">
+    @if (detail.spriteUrl) {
+    <img [src]="detail.spriteUrl" [alt]="detail.name" />
+    } @else {
+    <img src="pokeball.png" alt="No image available" />
+    }
+
+    <span class="pokemon-number">{{ detail.pokedexNumber | pokedexNumber }}</span>
+    <h1 class="pokemon-name">{{ detail.name }}</h1>
+
+    <div class="pokemon-types">
+        @for (type of detail.types; track type) {
+        <span class="type type-{{ type }}">{{ type }}</span>
+        }
+    </div>
+
+    <dl>
+        <dt>Height</dt>
+        <dd>{{ detail.heightMeters }} m</dd>
+        <dt>Weight</dt>
+        <dd>{{ detail.weightKg }} kg</dd>
+    </dl>
+
+    <h2>Base Stats</h2>
+    <ul>
+        <li>HP: {{ detail.stats.hp }}</li>
+        <li>Attack: {{ detail.stats.attack }}</li>
+        <li>Defense: {{ detail.stats.defense }}</li>
+        <li>Special Attack: {{ detail.stats.specialAttack }}</li>
+        <li>Special Defense: {{ detail.stats.specialDefense }}</li>
+        <li>Speed: {{ detail.stats.speed }}</li>
+    </ul>
+</article>
+} @else if (notFound()) {
+<p>Pokémon not found</p>
+}
+@else if (pokemon.error()) {
+<p>Failed to load pokemon</p>
+}
