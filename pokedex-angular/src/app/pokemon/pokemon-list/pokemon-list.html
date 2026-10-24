@@ -1,28 +1,31 @@
 @if (pokemons.isLoading()) {
-  <p>Cargando...</p>
+<p>Loading...</p>
 } @else if (pokemons.error()) {
-  <p>No se pudieron cargar los Pokémon.</p>
+<p>No se pudieron cargar los Pokémon.</p>
 } @else {
-  <section class="pokemon-grid">
-    @for (pokemon of pokemons.value()?.content ?? []; track pokemon.pokedexNumber) {
-      <article class="pokemon-card">
-        @if (pokemon.spriteUrl) {
-          <img [src]="pokemon.spriteUrl" [alt]="pokemon.name" />
-        } @else {
-          <img src="pokeball.png" alt="Sin imagen disponible" />
+<section class="pokemon-grid">
+  @for (pokemon of pokemons.value()?.content ?? []; track pokemon.pokedexNumber) {
+  <a [routerLink]="['/pokemon', pokemon.pokedexNumber]">
+
+    <article class="pokemon-card">
+      @if (pokemon.spriteUrl) {
+      <img [src]="pokemon.spriteUrl" [alt]="pokemon.name" />
+      } @else {
+      <img src="pokeball.png" alt="Sin imagen disponible" />
+      }
+
+      <span class="pokemon-number">{{ pokemon.pokedexNumber | pokedexNumber }}</span>
+      <h2 class="pokemon-name">{{ pokemon.name }}</h2>
+
+      <div class="pokemon-types">
+        @for (type of pokemon.types; track type) {
+        <span class="type type-{{ type }}">{{ type }}</span>
         }
-
-        <span class="pokemon-number">{{ pokemon.pokedexNumber | pokedexNumber }}</span>
-        <h2 class="pokemon-name">{{ pokemon.name }}</h2>
-
-        <div class="pokemon-types">
-          @for (type of pokemon.types; track type) {
-            <span class="type type-{{ type }}">{{ type }}</span>
-          }
-        </div>
-      </article>
-    } @empty {
-      <p>No hay Pokémon.</p>
-    }
-  </section>
+      </div>
+    </article>
+  </a>
+  } @empty {
+  <p>No Pokémon available.</p>
+  }
+</section>
 }

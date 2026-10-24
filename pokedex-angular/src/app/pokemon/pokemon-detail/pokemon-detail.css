@@ -1,0 +1,28 @@
+.pokemon-detail {
+  max-width: 480px;
+  margin: 0 auto;      /* centra la ficha en la pantalla */
+  text-align: center;
+}
+
+.pokemon-detail img {
+  width: 100%;
+  max-width: 300px;
+}
+
+/* Altura y peso en dos columnas: etiqueta | valor */
+.pokemon-detail dl {
+  display: grid;
+  grid-template-columns: auto auto;
+  gap: 4px 1rem;
+  justify-content: center;
+}
+
+.pokemon-detail dd {
+  margin: 0;           /* el navegador le pone sangría por defecto */
+}
+
+/* Stats sin viñetas */
+.pokemon-detail ul {
+  list-style: none;
+  padding: 0;
+}
