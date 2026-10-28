@@ -34,6 +34,7 @@ public class PokemonController {
 
     @Operation(summary = "Get a Pokemon by its Pokedex number")
 
+
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "A Pokemon was found"),
 
@@ -50,7 +51,7 @@ public class PokemonController {
     })
 
     @GetMapping("/{pokedexNumber}")
-    public PokemonResponse getByPokedexNumber(@PathVariable @Positive int pokedexNumber) {
+    public PokemonResponse getByPokedexNumber(@PathVariable @Positive(message = "must be a positive integer") int pokedexNumber) {
         return pokemonService.findByPokedexNumber(pokedexNumber);
     }
 
