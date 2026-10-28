@@ -32,6 +32,11 @@ Pending items, each linked to the block that fixes it.
 
 | Issue | Fixed in |
 |---|---|
+<<<<<<< HEAD
+=======
+| Error handling is only tested manually | 5 |
+| Validation errors return a generic detail (`"Validation failure"`) | 5 |
+>>>>>>> bd4299f26e79bb9c4d77b754826a87c884f99c36
 | Sort accepts any entity field | 8 |
 | N+1 queries when loading the list | 11 |
 | Swagger UI is public | 12 |
