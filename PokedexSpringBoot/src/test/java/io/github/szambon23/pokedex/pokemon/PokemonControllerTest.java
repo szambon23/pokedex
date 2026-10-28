@@ -68,6 +68,13 @@ public class PokemonControllerTest {
 
         assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
         assertThat(result).hasContentTypeCompatibleWith(MediaType.APPLICATION_PROBLEM_JSON);
+        assertThat(result).bodyJson()
+                .extractingPath("$.title")
+                .isEqualTo("Invalid request parameter");
+        assertThat(result).bodyJson()
+                .extractingPath("$.detail")
+                .isEqualTo("pokedexNumber: must be a positive integer");
+
         verifyNoInteractions(pokemonService);
 
     }
