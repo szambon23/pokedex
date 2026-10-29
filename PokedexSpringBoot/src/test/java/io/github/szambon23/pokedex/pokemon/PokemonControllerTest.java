@@ -1,3 +1,4 @@
+
 package io.github.szambon23.pokedex.pokemon;
 
 import io.github.szambon23.pokedex.pokemon.dto.PokemonResponse;
