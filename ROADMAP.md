@@ -2,7 +2,7 @@
 
 Blocks are listed in the order they're being built: backend blocks are numbered, frontend (Angular) blocks are lettered.
 
-**Progress: 7 / 17 blocks**
+**Progress: 8 / 17 blocks**
 
 ✅ Done · 🔜 Next · ⬜ Pending
 
@@ -15,8 +15,8 @@ Blocks are listed in the order they're being built: backend blocks are numbered,
 | 4 | Error handling | Backend | ProblemDetail (RFC 9457), global exception handler, 400 / 404 / 500 | ✅ |
 | A | List & detail pages | Frontend | Angular setup, dev proxy, generated API client, Pokémon grid, detail page, not-found handling | ✅ |
 | 5 | Backend tests | Backend | Service tests with Mockito, controller tests with `@WebMvcTest` including error cases | ✅ |
-| 6 | PokéAPI client | Backend | HTTP client with `@HttpExchange` | 🔜 |
-| 7 | Gen 1 importer | Backend | Idempotent import of the 151 Gen 1 Pokémon, `changeTypes` | ⬜ |
+| 6 | PokéAPI client | Backend | HTTP client with `@HttpExchange` | ✅ |
+| 7 | Gen 1 importer | Backend | Idempotent import of the 151 Gen 1 Pokémon, `changeTypes` | 🔜 |
 | B | Pagination | Frontend | Pagination controls for the full list | ⬜ |
 | 8 | Search & filters | Backend | Search filters, V2 migration (generation), `GET /types`, sort-field whitelist | ⬜ |
 | C | Search UI | Frontend | Filters and search in the list | ⬜ |
