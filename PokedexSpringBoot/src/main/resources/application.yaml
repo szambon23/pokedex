@@ -9,6 +9,10 @@ spring:
     web:
       pageable:
         max-page-size: 100
+  http:
+    serviceclient:
+      pokeapi:
+        base-url: https://pokeapi.co/api/v2
 
 springdoc:
   default-produces-media-type: application/json
