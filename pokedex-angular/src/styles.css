@@ -35,3 +35,5 @@ body {
 .type-water    { background-color: #00bfff; }
 .type-electric { background-color: yellow; color: black; }
 .type-flying   { background-color: #9fc5e8; color: black; }
+.type-normal   { background-color: #A9A9A9; color: white; }
+.type-bug   { background-color: #91A119; color: white; }
