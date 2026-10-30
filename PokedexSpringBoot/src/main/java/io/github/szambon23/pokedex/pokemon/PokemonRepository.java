@@ -6,4 +6,5 @@ import java.util.Optional;
 
 public interface PokemonRepository extends JpaRepository<Pokemon, Long> {
     Optional<Pokemon> findByPokedexNumber(int pokedexNumber);
+    boolean existsByPokedexNumber(int pokedexNumber);
 }
