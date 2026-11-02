@@ -30,9 +30,9 @@
 </section>
 
 <nav class="pagination">
-  <button (click)="previousPage()" [disabled]="page() === 0">← Previous</button>
-  <span>Page {{ page() + 1 }} of {{ totalPages() }}</span>
-  <button (click)="nextPage()" [disabled]="page() + 1 >= totalPages()">Next →</button>
+  <button (click)="goToPage(page() - 1)" [disabled]="page() === 1">← Previous</button>
+  <span>Page {{ page() }} of {{ totalPages() }}</span>
+  <button (click)="goToPage(page() + 1)" [disabled]="page() >= totalPages()">Next →</button>
 </nav>
 
 }
