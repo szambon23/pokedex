@@ -1,4 +1,5 @@
-import { Component, computed, inject, input, numberAttribute } from '@angular/core';
+import { Component, computed, effect, inject, input, numberAttribute } from '@angular/core';
+import { Location } from '@angular/common';
 import { PokemonService } from '../../api/services';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { PokedexNumberPipe } from '../pokedex-number-pipe';
@@ -13,6 +14,7 @@ import { HttpErrorResponse } from '@angular/common/http';
 })
 export class PokemonDetail {
   private readonly pokemonService = inject(PokemonService);
+  private readonly location = inject(Location);
 
   readonly pokedexNumber = input.required({ transform: numberAttribute });
 
@@ -26,4 +28,8 @@ export class PokemonDetail {
     const error = this.pokemon.error();
     return error instanceof HttpErrorResponse && (error.status === 404 || error.status === 400);
   });
+
+  protected goBack(): void{
+    this.location.back();
+  }
 }

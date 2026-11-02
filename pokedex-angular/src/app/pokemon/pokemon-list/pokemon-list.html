@@ -1,7 +1,7 @@
 @if (pokemons.isLoading()) {
 <p>Loading...</p>
 } @else if (pokemons.error()) {
-<p>No se pudieron cargar los Pokémon.</p>
+<p>Failed to load Pokémon.</p>
 } @else {
 <section class="pokemon-grid">
   @for (pokemon of pokemons.value()?.content ?? []; track pokemon.pokedexNumber) {
@@ -11,7 +11,7 @@
       @if (pokemon.spriteUrl) {
       <img [src]="pokemon.spriteUrl" [alt]="pokemon.name" />
       } @else {
-      <img src="pokeball.png" alt="Sin imagen disponible" />
+      <img src="pokeball.png" alt="No image available." />
       }
 
       <span class="pokemon-number">{{ pokemon.pokedexNumber | pokedexNumber }}</span>
@@ -28,4 +28,11 @@
   <p>No Pokémon available.</p>
   }
 </section>
+
+<nav class="pagination">
+  <button (click)="goToPage(page() - 1)" [disabled]="page() === 1">← Previous</button>
+  <span>Page {{ page() }} of {{ totalPages() }}</span>
+  <button (click)="goToPage(page() + 1)" [disabled]="page() >= totalPages()">Next →</button>
+</nav>
+
 }
