@@ -1,6 +1,7 @@
 package io.github.szambon23.pokedex.pokemon;
 
 
+import io.github.szambon23.pokedex.pokemon.dto.PokemonFilter;
 import io.github.szambon23.pokedex.pokemon.dto.PokemonResponse;
 import io.github.szambon23.pokedex.pokemon.dto.PokemonSummary;
 import io.github.szambon23.pokedex.shared.PageResponse;
@@ -73,7 +74,8 @@ public class PokemonController {
 
     @GetMapping
     public PageResponse<PokemonSummary> getAll(
+            @ParameterObject PokemonFilter filter,
             @ParameterObject @PageableDefault(size = 20, sort = "pokedexNumber") Pageable pageable) {
-        return pokemonService.findAll(pageable);
+        return pokemonService.findAll(filter, pageable);
     }
 }
