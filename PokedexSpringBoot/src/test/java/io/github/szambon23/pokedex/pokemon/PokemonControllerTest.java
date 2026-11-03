@@ -1,6 +1,7 @@
 
 package io.github.szambon23.pokedex.pokemon;
 
+import io.github.szambon23.pokedex.pokemon.dto.PokemonFilter;
 import io.github.szambon23.pokedex.pokemon.dto.PokemonResponse;
 import io.github.szambon23.pokedex.pokemon.dto.PokemonSummary;
 import io.github.szambon23.pokedex.pokemon.dto.StatsResponse;
@@ -19,8 +20,8 @@ import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.*;
 
 @WebMvcTest(PokemonController.class)
 public class PokemonControllerTest {
@@ -91,5 +92,15 @@ public class PokemonControllerTest {
         assertThat(result).hasStatusOk();
         assertThat(result).bodyJson().extractingPath("$.content[0].name").isEqualTo("pikachu");
         assertThat(result).bodyJson().extractingPath("$.totalElements").isEqualTo(1);
+    }
+
+    @Test
+    void getAllPassesFiltersToService() {
+        when(pokemonService.findAll(any(PokemonFilter.class), any(Pageable.class)))
+                .thenReturn(new PageResponse<>(List.of(), 0, 20, 0, 0));
+
+        mvc.get().uri("/api/v1/pokemon?name=char&type=fire").exchange();
+
+        verify(pokemonService).findAll(eq(new PokemonFilter("char", "fire")), any(Pageable.class));
     }
 }
