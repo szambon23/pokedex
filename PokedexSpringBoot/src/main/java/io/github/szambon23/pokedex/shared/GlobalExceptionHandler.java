@@ -29,6 +29,18 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         return problemDetail;
     }
 
+    @ExceptionHandler(InvalidSortPropertyException.class)
+    public ProblemDetail handleInvalidSortProperty(InvalidSortPropertyException ex) {
+        String detail = "Cannot sort by '" + ex.getProperty() + "'. Allowed properties: "
+                + String.join(", ", ex.getAllowedProperties());
+
+        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.BAD_REQUEST, detail);
+        problem.setTitle("Invalid sort parameter");
+        problem.setProperty("property", ex.getProperty());
+        problem.setProperty("allowedProperties", ex.getAllowedProperties());
+        return problem;
+    }
+
     @ExceptionHandler(PropertyReferenceException.class)
     public ProblemDetail handlePropertyReference(PropertyReferenceException ex) {
         String detail = "Cannot sort by '" + ex.getPropertyName() + "': unknown property";

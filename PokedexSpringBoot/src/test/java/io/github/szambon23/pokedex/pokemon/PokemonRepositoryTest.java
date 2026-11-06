@@ -32,7 +32,7 @@ public class PokemonRepositoryTest {
     BaseStats pikachuBaseStats = new BaseStats(35, 55, 40, 50, 50, 90);
 
     @Test
-    void savesAndFindsPokemonByPokedexNumbre() {
+    void savesAndFindsPokemonByPokedexNumber() {
 
         Type electricType = typeRepository.save(new Type("electric"));
         Type grassType = typeRepository.save(new Type("grass"));

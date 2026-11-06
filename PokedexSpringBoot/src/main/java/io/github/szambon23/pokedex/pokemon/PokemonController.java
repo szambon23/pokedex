@@ -1,6 +1,7 @@
 package io.github.szambon23.pokedex.pokemon;
 
 
+import io.github.szambon23.pokedex.pokemon.dto.PokemonFilter;
 import io.github.szambon23.pokedex.pokemon.dto.PokemonResponse;
 import io.github.szambon23.pokedex.pokemon.dto.PokemonSummary;
 import io.github.szambon23.pokedex.shared.PageResponse;
@@ -57,23 +58,26 @@ public class PokemonController {
 
 
     @Operation(
-            summary = "List Pokemon, paginated",
+            summary = "List Pokemon, paginated and filtered",
             description = "Returns a page of Pokemon summaries. By default, 20 per page sorted by Pokedex number. "
-                    + "Use the page, size and sort parameters to change it (maximum page size: 100)."
+                    + "Optional filters: name (contains, case-insensitive) and type (exact match, case-insensitive). "
+                    + "Sortable properties: pokedexNumber, name, heightMeters, weightKg, hp, attack, defense, "
+                    + "specialAttack, specialDefense, speed. Example: sort=speed,desc. "
+                    + "Ties are broken by Pokedex number. Maximum page size: 100."
     )
-
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "A page of Pokemon summaries was found."),
 
             @ApiResponse(responseCode = "400",
-                    description = "Invalid sort parameter, such as an unknown property.",
+                    description = "Invalid sort parameter. The response lists the allowed properties.",
                     content = @Content(mediaType = "application/problem+json",
                             schema = @Schema(implementation = ProblemDetail.class))),
     })
 
     @GetMapping
     public PageResponse<PokemonSummary> getAll(
+            @ParameterObject PokemonFilter filter,
             @ParameterObject @PageableDefault(size = 20, sort = "pokedexNumber") Pageable pageable) {
-        return pokemonService.findAll(pageable);
+        return pokemonService.findAll(filter, pageable);
     }
 }

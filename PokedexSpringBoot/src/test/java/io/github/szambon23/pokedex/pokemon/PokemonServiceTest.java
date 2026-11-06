@@ -1,5 +1,6 @@
 package io.github.szambon23.pokedex.pokemon;
 
+import io.github.szambon23.pokedex.pokemon.dto.PokemonFilter;
 import io.github.szambon23.pokedex.pokemon.dto.PokemonResponse;
 import io.github.szambon23.pokedex.pokemon.dto.PokemonSummary;
 import io.github.szambon23.pokedex.shared.PageResponse;
@@ -13,12 +14,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.util.List;
 import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -27,6 +30,10 @@ class PokemonServiceTest {
     @Mock
     private PokemonRepository pokemonRepository;
     private PokemonService pokemonService;
+
+    private static Pokemon pikachu() {
+        return new Pokemon(25, "pikachu", 4, 60, "...", new BaseStats(35, 55, 40, 50, 50, 90), new Type("electric"));
+    }
 
     @BeforeEach
     void setUp() {
@@ -57,9 +64,9 @@ class PokemonServiceTest {
         // given: los datos y el guion del mock
         Pageable pageable = PageRequest.of(0, 20);
         Page<Pokemon> page = new PageImpl<>(List.of(pikachu()), pageable, 1);
-        when(pokemonRepository.findAll(pageable)).thenReturn(page);
+        when(pokemonRepository.findAll(any(Specification.class), any(Pageable.class))).thenReturn(page);
 
-        PageResponse<PokemonSummary> response = pokemonService.findAll(pageable);
+        PageResponse<PokemonSummary> response = pokemonService.findAll(new PokemonFilter(null, null), pageable);
 
         assertThat(response.content())
                 .extracting(PokemonSummary::name)
@@ -69,9 +76,5 @@ class PokemonServiceTest {
         assertThat(response.size()).isEqualTo(20);
         assertThat(response.totalElements()).isEqualTo(1);
         assertThat(response.totalPages()).isEqualTo(1);
-    }
-
-    private static Pokemon pikachu() {
-        return new Pokemon(25, "pikachu", 4, 60, "...", new BaseStats(35, 55, 40, 50, 50, 90), new Type("electric"));
     }
 }

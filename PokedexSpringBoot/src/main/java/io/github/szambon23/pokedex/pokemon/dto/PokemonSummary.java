@@ -8,6 +8,7 @@ public record PokemonSummary(
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED) int pokedexNumber,
         @Schema(requiredMode = Schema.RequiredMode.REQUIRED) String name,
         String spriteUrl,
-        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) List<String> types
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) List<String> types,
+        @Schema(requiredMode = Schema.RequiredMode.REQUIRED) StatsResponse stats
 ) {
 }
