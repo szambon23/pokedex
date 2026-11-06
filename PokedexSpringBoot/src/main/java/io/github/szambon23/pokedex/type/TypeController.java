@@ -22,6 +22,7 @@ public class TypeController {
     }
 
     @Operation(
+            operationId = "listTypes",
             summary = "List all Pokemon types",
             description = "Returns every type that at least one Pokemon in the Pokedex has, sorted alphabetically. "
                     + "The list is small, so it is not paginated. "

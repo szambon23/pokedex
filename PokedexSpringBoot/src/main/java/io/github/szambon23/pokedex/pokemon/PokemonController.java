@@ -33,7 +33,8 @@ public class PokemonController {
         this.pokemonService = pokemonService;
     }
 
-    @Operation(summary = "Get a Pokemon by its Pokedex number")
+    @Operation(operationId = "getPokemon",
+            summary = "Get a Pokemon by its Pokedex number")
 
 
     @ApiResponses({
@@ -58,6 +59,7 @@ public class PokemonController {
 
 
     @Operation(
+            operationId = "listPokemon",
             summary = "List Pokemon, paginated and filtered",
             description = "Returns a page of Pokemon summaries. By default, 20 per page sorted by Pokedex number. "
                     + "Optional filters: name (contains, case-insensitive) and type (exact match, case-insensitive). "
