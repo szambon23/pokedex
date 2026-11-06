@@ -32,11 +32,13 @@ Pending items, each linked to the block that fixes it.
 
 | Issue | Fixed in |
 |---|---|
-| Sort accepts any entity field | 8 |
+|Search name doesn’t escape SQL wildcards (%, _)| 11 |
+|Generation filter postponed until more generations are imported| 11 |
 | N+1 queries when loading the list | 11 |
 | Swagger UI is public | 12 |
 | Pokémon card is not extracted into its own component | B |
 | Type colors cover only 6 of the 18 types | B |
 | Broken sprite URLs (image fails to load) are not handled | B |
 | Base stats are a plain list (bars planned) | C |
+|The list response doesn’t include stats, so sorting by a stat isn’t visible on the cards| C |
 | No frontend tests | — |
