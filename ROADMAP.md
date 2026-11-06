@@ -17,8 +17,8 @@ Blocks are listed in the order they're being built: backend blocks are numbered,
 | 5 | Backend tests | Backend | Service tests with Mockito, controller tests with `@WebMvcTest` including error cases | ✅ |
 | 6 | PokéAPI client | Backend | HTTP client with `@HttpExchange` | ✅ |
 | 7 | Gen 1 importer | Backend | Idempotent import of the 151 Gen 1 Pokémon, `changeTypes` | ✅ |
-| B | Pagination | Frontend | Pagination controls for the full list | 🔜 |
-| 8 | Search & filters | Backend | Search filters, V2 migration (generation), `GET /types`, sort-field whitelist | ⬜ |
+| B | Pagination | Frontend | Pagination controls for the full list | ✅ |
+| 8 | Search & filters | Backend | Search filters, V2 migration (generation), `GET /types`, sort-field whitelist | 🔜 |
 | C | Search UI | Frontend | Filters and search in the list | ⬜ |
 | 10 | Teams | Backend | Teams of up to 6 Pokémon, `POST` returns 201 + `Location` | ⬜ |
 | D | Teams UI | Frontend | Create and view teams | ⬜ |
