@@ -12,7 +12,7 @@ import java.util.List;
 public class PokemonMapper {
     public PokemonSummary toSummary(Pokemon pokemon) {
         return new PokemonSummary(pokemon.getPokedexNumber(), pokemon.getName(),
-                pokemon.getSpriteUrl(), typesToStringList(pokemon.getTypes()));
+                pokemon.getSpriteUrl(), typesToStringList(pokemon.getTypes()), toStatsResponse(pokemon.getStats()));
     }
 
     public PokemonResponse toResponse(Pokemon pokemon) {

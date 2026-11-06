@@ -15,19 +15,23 @@ import org.springframework.context.annotation.Import;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
+
 import static org.assertj.core.api.Assertions.assertThat;
 
 @DataJpaTest
 @AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.NONE)
 @Import({TestcontainersConfiguration.class, PokemonService.class, PokemonMapper.class})
 class PokemonSearchTest {
+    private static final Pageable FIRST_PAGE = PageRequest.of(0, 20, Sort.by("pokedexNumber"));
+    private static final Pageable FIRST_PAGE_WITH_SPEED_SORT = PageRequest.of(0, 20, Sort.by(Sort.Direction.DESC, "speed"));
     @Autowired
     private PokemonService pokemonService;
-
     @Autowired
     private TestEntityManager entityManager;
 
-    private static final Pageable FIRST_PAGE = PageRequest.of(0, 20, Sort.by("pokedexNumber"));
+    private static BaseStats statsWithSpeed(int speed) {
+        return new BaseStats(50, 50, 50, 50, 50, speed);
+    }
 
     @BeforeEach
     void setUp() {
@@ -35,9 +39,9 @@ class PokemonSearchTest {
         Type flying = entityManager.persist(new Type("flying"));
         Type water = entityManager.persist(new Type("water"));
 
-        entityManager.persist(new Pokemon(4, "charmander", 6, 85, null, stats(), fire));
-        entityManager.persist(new Pokemon(6, "charizard", 17, 905, null, stats(), fire, flying));
-        entityManager.persist(new Pokemon(7, "squirtle", 5, 90, null, stats(), water));
+        entityManager.persist(new Pokemon(4, "charmander", 6, 85, null, statsWithSpeed(65), fire));
+        entityManager.persist(new Pokemon(6, "charizard", 17, 905, null, statsWithSpeed(100), fire, flying));
+        entityManager.persist(new Pokemon(7, "squirtle", 5, 90, null, statsWithSpeed(43), water));
 
         entityManager.flush();
         entityManager.clear();
@@ -47,36 +51,28 @@ class PokemonSearchTest {
     void returnsAllPokemonWithoutFilters() {
         PageResponse<PokemonSummary> result = pokemonService.findAll(new PokemonFilter(null, null), FIRST_PAGE);
 
-        assertThat(result.content())
-                .extracting(PokemonSummary::name)
-                .containsExactly("charmander", "charizard", "squirtle");
+        assertThat(result.content()).extracting(PokemonSummary::name).containsExactly("charmander", "charizard", "squirtle");
     }
 
     @Test
-    void filtersByNameIgnoringCase(){
+    void filtersByNameIgnoringCase() {
         PageResponse<PokemonSummary> result = pokemonService.findAll(new PokemonFilter("CHAR", null), FIRST_PAGE);
 
-        assertThat(result.content())
-                .extracting(PokemonSummary::name)
-                .containsExactly("charmander", "charizard");
+        assertThat(result.content()).extracting(PokemonSummary::name).containsExactly("charmander", "charizard");
     }
 
     @Test
     void filtersByTypeIgnoringCase() {
         PageResponse<PokemonSummary> result = pokemonService.findAll(new PokemonFilter(null, "Fire"), FIRST_PAGE);
 
-        assertThat(result.content())
-                .extracting(PokemonSummary::name)
-                .containsExactly("charmander", "charizard");
+        assertThat(result.content()).extracting(PokemonSummary::name).containsExactly("charmander", "charizard");
     }
 
     @Test
     void filtersBySecondaryType() {
         PageResponse<PokemonSummary> result = pokemonService.findAll(new PokemonFilter(null, "flying"), FIRST_PAGE);
 
-        assertThat(result.content())
-                .extracting(PokemonSummary::name)
-                .containsExactly("charizard");
+        assertThat(result.content()).extracting(PokemonSummary::name).containsExactly("charizard");
     }
 
     @Test
@@ -88,17 +84,18 @@ class PokemonSearchTest {
     }
 
     @Test
-    void combinesNameAndTypeFilters(){
+    void combinesNameAndTypeFilters() {
 
         PageResponse<PokemonSummary> result = pokemonService.findAll(new PokemonFilter("zard", "fire"), FIRST_PAGE);
 
-        assertThat(result.content())
-                .extracting(PokemonSummary::name)
-                .containsExactly("charizard");
+        assertThat(result.content()).extracting(PokemonSummary::name).containsExactly("charizard");
     }
 
-    private static BaseStats stats() {
-        return new BaseStats(50, 50, 50, 50, 50, 50);
+    @Test
+    void sortsBySpeedDescending() {
+        PageResponse<PokemonSummary> result = pokemonService.findAll(new PokemonFilter(null, null), FIRST_PAGE_WITH_SPEED_SORT);
+
+        assertThat(result.content()).extracting(PokemonSummary::name).containsExactly("charizard", "charmander", "squirtle");
     }
 }
 

@@ -31,7 +31,8 @@ public class PokemonMapperTest {
 
     PokemonSummary expectedBulbasaurToSummary = new PokemonSummary(
         1, bulbasaurName,
-            "notBeingTested", List.of("grass", "poison")
+            "notBeingTested", List.of("grass", "poison"),
+            new StatsResponse(45, 49, 49, 65, 65, 45)
     );
 
     @Test

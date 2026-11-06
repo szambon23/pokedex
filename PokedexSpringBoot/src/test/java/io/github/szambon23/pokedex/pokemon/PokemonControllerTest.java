@@ -1,17 +1,18 @@
-
 package io.github.szambon23.pokedex.pokemon;
 
 import io.github.szambon23.pokedex.pokemon.dto.PokemonFilter;
 import io.github.szambon23.pokedex.pokemon.dto.PokemonResponse;
 import io.github.szambon23.pokedex.pokemon.dto.PokemonSummary;
 import io.github.szambon23.pokedex.pokemon.dto.StatsResponse;
+import io.github.szambon23.pokedex.shared.InvalidSortPropertyException;
 import io.github.szambon23.pokedex.shared.PageResponse;
-import org.springframework.data.domain.Pageable;
-import org.springframework.http.MediaType;
 import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.assertj.MockMvcTester;
 import org.springframework.test.web.servlet.assertj.MvcTestResult;
@@ -22,6 +23,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.*;
+
 
 @WebMvcTest(PokemonController.class)
 public class PokemonControllerTest {
@@ -83,9 +85,9 @@ public class PokemonControllerTest {
 
     @Test
     void getAllReturnsPageOfSummaries() {
-        PokemonSummary pikachu = new PokemonSummary(25, "pikachu", "...", List.of("electric"));
+        PokemonSummary pikachu = new PokemonSummary(25, "pikachu", "...", List.of("electric"), new StatsResponse(35, 55, 40, 50, 50, 90));
         PageResponse<PokemonSummary> page = new PageResponse<>(List.of(pikachu), 0, 20, 1, 1);
-        when(pokemonService.findAll(any(Pageable.class))).thenReturn(page);
+        when(pokemonService.findAll(any(PokemonFilter.class), any(Pageable.class))).thenReturn(page);
 
         MvcTestResult result = mvc.get().uri("/api/v1/pokemon").exchange();
 
@@ -103,4 +105,37 @@ public class PokemonControllerTest {
 
         verify(pokemonService).findAll(eq(new PokemonFilter("char", "fire")), any(Pageable.class));
     }
+
+    @Test
+    void getAllReturns400WhenSortPropertyIsNotAllowed() {
+        when(pokemonService.findAll(any(PokemonFilter.class), any(Pageable.class)))
+                .thenThrow(new InvalidSortPropertyException("id", List.of("name", "pokedexNumber")));
+
+        MvcTestResult result = mvc.get().uri("/api/v1/pokemon?sort=id").exchange();
+
+        assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
+        assertThat(result).bodyJson().extractingPath("$.title").isEqualTo("Invalid sort parameter");
+        assertThat(result).bodyJson().extractingPath("$.property").isEqualTo("id");
+        assertThat(result).bodyJson()
+                .extractingPath("$.allowedProperties")
+                .asArray()
+                .containsExactly("name", "pokedexNumber");
+    }
+
+    @Test
+    void getAllUsesDefaultPagination() {
+        when(pokemonService.findAll(any(PokemonFilter.class), any(Pageable.class)))
+                .thenReturn(new PageResponse<>(List.of(), 0, 20, 0, 0));
+
+        mvc.get().uri("/api/v1/pokemon").exchange();
+
+        ArgumentCaptor<Pageable> captor = ArgumentCaptor.forClass(Pageable.class);
+        verify(pokemonService).findAll(any(PokemonFilter.class), captor.capture());
+
+        Pageable pageable = captor.getValue();
+        assertThat(pageable.getPageNumber()).isEqualTo(0);
+        assertThat(pageable.getPageSize()).isEqualTo(20);
+        assertThat(pageable.getSort().getOrderFor("pokedexNumber")).isNotNull();
+    }
 }
+

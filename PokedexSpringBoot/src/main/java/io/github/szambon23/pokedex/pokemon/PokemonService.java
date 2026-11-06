@@ -27,13 +27,6 @@ public class PokemonService {
                 .orElseThrow(() -> new PokemonNotFoundException(pokedexNumber));
     }
 
-    public PageResponse<PokemonSummary> findAll(Pageable pageable){
-        Page<Pokemon> pokemons = pokemonRepository.findAll(pageable);
-        Page<PokemonSummary> pokemonsSummary = pokemons.map(pokemonMapper::toSummary);
-
-        return PageResponse.from(pokemonsSummary);
-    }
-
     public PageResponse<PokemonSummary> findAll(PokemonFilter filter, Pageable pageable) {
         Specification<Pokemon> spec = Specification.unrestricted();
 
@@ -44,7 +37,10 @@ public class PokemonService {
             spec = spec.and(PokemonSpecifications.hasType(filter.type()));
         }
 
-        Page<PokemonSummary> page = pokemonRepository.findAll(spec, pageable).map(pokemonMapper::toSummary);
+        Pageable entityPageable = PokemonSortProperties.toEntityPageable(pageable);   // ← nuevo
+
+        Page<PokemonSummary> page = pokemonRepository.findAll(spec, entityPageable)  // ← entityPageable, no pageable
+                .map(pokemonMapper::toSummary);
         return PageResponse.from(page);
     }
 
