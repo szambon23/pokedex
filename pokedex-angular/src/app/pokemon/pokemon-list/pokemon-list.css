@@ -10,17 +10,6 @@
   color: inherit;
 }
 
-.pokemon-card {
-  border: 1px solid #ddd;
-  border-radius: 12px;
-  padding: 1rem;
-  text-align: center;
-}
-
-.pokemon-card img {
-  width: 100%;
-}
-
 .pagination{
   display: flex;
   justify-content: center;

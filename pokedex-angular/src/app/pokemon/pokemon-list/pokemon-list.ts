@@ -3,13 +3,15 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { PokemonService } from '../../api/services/pokemon.service';
 import { PokedexNumberPipe } from '../pokedex-number-pipe';
 import { Router, RouterLink } from '@angular/router';
+import { PokemonCard } from '../pokemon-card/pokemon-card';   // ← 1: TypeScript conoce la clase
 
 @Component({
-  imports: [PokedexNumberPipe, RouterLink],
+  imports: [PokemonCard, RouterLink],                          // ← 2: el template puede usar la etiqueta
   selector: 'app-pokemon-list',
   styleUrl: './pokemon-list.css',
   templateUrl: './pokemon-list.html',
 })
+
 export class PokemonList {
   private readonly pokemonService = inject(PokemonService);
   private readonly pageSize = 20;
@@ -21,7 +23,7 @@ export class PokemonList {
 
   protected readonly pokemons = rxResource({
     params: () => this.page() - 1,
-    stream: ({ params: page }) => this.pokemonService.getAll({ page, size: this.pageSize }),
+    stream: ({ params: page }) => this.pokemonService.listPokemon({ page, size: this.pageSize }),
   });
 
   protected readonly totalPages = computed(() =>

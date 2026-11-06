@@ -1,0 +1,16 @@
+<article class="pokemon-card">
+  @if (pokemon().spriteUrl && !imageFailed()) {
+    <img [src]="pokemon().spriteUrl" [alt]="pokemon().name" (error)="imageFailed.set(true)" />
+  } @else {
+    <img src="pokeball.png" alt="No image available" />
+  }
+
+  <span class="pokemon-number">{{ pokemon().pokedexNumber | pokedexNumber }}</span>
+  <h2 class="pokemon-name">{{ pokemon().name }}</h2>
+
+  <div class="pokemon-types">
+    @for (type of pokemon().types; track type) {
+      <span class="type type-{{ type }}">{{ type }}</span>
+    }
+  </div>
+</article>

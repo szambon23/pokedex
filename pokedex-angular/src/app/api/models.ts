@@ -6,3 +6,4 @@ export type { PokemonResponse } from './models/pokemon-response';
 export type { PokemonSummary } from './models/pokemon-summary';
 export type { ProblemDetail } from './models/problem-detail';
 export type { StatsResponse } from './models/stats-response';
+export type { TypeResponse } from './models/type-response';

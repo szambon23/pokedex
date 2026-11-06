@@ -1,38 +1,21 @@
 @if (pokemons.isLoading()) {
-<p>Loading...</p>
+  <p>Loading...</p>
 } @else if (pokemons.error()) {
-<p>Failed to load Pokémon.</p>
+  <p>Failed to load Pokémon.</p>
 } @else {
-<section class="pokemon-grid">
-  @for (pokemon of pokemons.value()?.content ?? []; track pokemon.pokedexNumber) {
-  <a [routerLink]="['/pokemon', pokemon.pokedexNumber]">
+  <section class="pokemon-grid">
+    @for (pokemon of pokemons.value()?.content ?? []; track pokemon.pokedexNumber) {
+      <a [routerLink]="['/pokemon', pokemon.pokedexNumber]">
+        <app-pokemon-card [pokemon]="pokemon" />
+      </a>
+    } @empty {
+      <p>No Pokémon available.</p>
+    }
+  </section>
 
-    <article class="pokemon-card">
-      @if (pokemon.spriteUrl) {
-      <img [src]="pokemon.spriteUrl" [alt]="pokemon.name" />
-      } @else {
-      <img src="pokeball.png" alt="No image available." />
-      }
-
-      <span class="pokemon-number">{{ pokemon.pokedexNumber | pokedexNumber }}</span>
-      <h2 class="pokemon-name">{{ pokemon.name }}</h2>
-
-      <div class="pokemon-types">
-        @for (type of pokemon.types; track type) {
-        <span class="type type-{{ type }}">{{ type }}</span>
-        }
-      </div>
-    </article>
-  </a>
-  } @empty {
-  <p>No Pokémon available.</p>
-  }
-</section>
-
-<nav class="pagination">
-  <button (click)="goToPage(page() - 1)" [disabled]="page() === 1">← Previous</button>
-  <span>Page {{ page() }} of {{ totalPages() }}</span>
-  <button (click)="goToPage(page() + 1)" [disabled]="page() >= totalPages()">Next →</button>
-</nav>
-
+  <nav class="pagination">
+    <button (click)="goToPage(page() - 1)" [disabled]="page() === 1">← Previous</button>
+    <span>Page {{ page() }} of {{ totalPages() }}</span>
+    <button (click)="goToPage(page() + 1)" [disabled]="page() >= totalPages()">Next →</button>
+  </nav>
 }

@@ -21,7 +21,7 @@ export class PokemonDetail {
   protected readonly pokemon = rxResource({
     params: () => this.pokedexNumber(),
     stream: ({ params: pokedexNumber }) =>
-      this.pokemonService.getByPokedexNumber({ pokedexNumber }),
+      this.pokemonService.getPokemon({ pokedexNumber }),
   });
 
   protected readonly notFound = computed(() => {
