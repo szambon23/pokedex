@@ -6,6 +6,7 @@ import { Router, RouterLink, Params} from '@angular/router';
 import { PokemonCard } from '../pokemon-card/pokemon-card';   // ← 1: TypeScript conoce la clase
 import { TypesService } from '../../api/services';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { StatsResponse } from '../../api/models';
 
 @Component({
   imports: [PokemonCard, RouterLink],                          // ← 2: el template puede usar la etiqueta
@@ -38,6 +39,14 @@ export class PokemonList {
   readonly type = input<string>();
   readonly sort = input<string>();
   protected readonly nameInput$ = new Subject<string>();
+
+  private static readonly STAT_KEYS: (keyof StatsResponse)[] =
+  ['hp', 'attack', 'defense', 'specialAttack', 'specialDefense', 'speed'];
+
+protected readonly highlightedStat = computed(() => {
+  const field = this.sort()?.split(',')[0];
+  return PokemonList.STAT_KEYS.find(key => key === field);
+});
 
   protected readonly types = rxResource({                  // el resource que usa el template
   stream: () => this.typesService.listTypes(),
@@ -83,5 +92,11 @@ constructor() {
   protected search(changes: Params): void {
   this.router.navigate([], { queryParams: { ...changes, page: 1 }, queryParamsHandling: 'merge' });
 }
+
+protected clearFilters(): void {
+  this.search({ name: null, type: null, sort: null });
+}
+
+protected readonly hasActiveFilters = computed(() => !!(this.name() || this.type() || this.sort()));
 
 }

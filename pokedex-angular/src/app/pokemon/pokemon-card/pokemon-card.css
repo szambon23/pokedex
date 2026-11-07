@@ -12,3 +12,13 @@
 .pokemon-card img {
   width: 100%;
 }
+
+.highlighted-stat {
+  display: inline-block;
+  margin-top: 0.5rem;
+  padding: 2px 10px;
+  border-radius: 12px;
+  background-color: #fff3cd;
+  font-weight: bold;
+  text-transform: capitalize;
+}

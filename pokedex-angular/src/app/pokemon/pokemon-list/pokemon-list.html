@@ -20,8 +20,11 @@
       </option>
     }
   </select>
-</div>
 
+    @if (hasActiveFilters()) {
+    <button type="button" (click)="clearFilters()">Clear filters</button>
+  }
+</div>
 
 @if (pokemons.isLoading()) {
   <p>Loading...</p>
@@ -31,7 +34,7 @@
   <section class="pokemon-grid">
     @for (pokemon of pokemons.value()?.content ?? []; track pokemon.pokedexNumber) {
       <a [routerLink]="['/pokemon', pokemon.pokedexNumber]">
-        <app-pokemon-card [pokemon]="pokemon" />
+        <app-pokemon-card [pokemon]="pokemon" [highlightStat]="highlightedStat()" />
       </a>
     } @empty {
       <p>No Pokémon available.</p>

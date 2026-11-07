@@ -5,6 +5,10 @@
     <img src="pokeball.png" alt="No image available" />
   }
 
+  @if (highlightStat(); as stat) {
+  <span class="highlighted-stat">{{ statLabels[stat] }}: {{ pokemon().stats[stat] }}</span>
+}
+
   <span class="pokemon-number">{{ pokemon().pokedexNumber | pokedexNumber }}</span>
   <h2 class="pokemon-name">{{ pokemon().name }}</h2>
 
