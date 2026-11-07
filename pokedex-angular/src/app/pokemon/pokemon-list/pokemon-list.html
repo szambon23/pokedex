@@ -6,6 +6,13 @@
     }
   </select>
 
+  <input
+  #nameInput
+  type="search"
+  placeholder="Search by name"
+  [value]="name() ?? ''"
+  (input)="nameInput$.next(nameInput.value)" />
+
   <select #sortSelect (change)="search({ sort: sortSelect.value })">
     @for (option of sortOptions; track option.value) {
       <option [value]="option.value" [selected]="option.value === (sort() ?? 'pokedexNumber')">

@@ -1,10 +1,11 @@
 import { Component, computed, effect, inject, input, numberAttribute, signal, Type } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PokemonService } from '../../api/services/pokemon.service';
 import { PokedexNumberPipe } from '../pokedex-number-pipe';
 import { Router, RouterLink, Params} from '@angular/router';
 import { PokemonCard } from '../pokemon-card/pokemon-card';   // ← 1: TypeScript conoce la clase
 import { TypesService } from '../../api/services';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
 
 @Component({
   imports: [PokemonCard, RouterLink],                          // ← 2: el template puede usar la etiqueta
@@ -36,6 +37,7 @@ export class PokemonList {
   readonly name = input<string>();
   readonly type = input<string>();
   readonly sort = input<string>();
+  protected readonly nameInput$ = new Subject<string>();
 
   protected readonly types = rxResource({                  // el resource que usa el template
   stream: () => this.typesService.listTypes(),
@@ -61,14 +63,18 @@ protected readonly pokemons = rxResource({
     this.pokemons.hasValue() ? this.pokemons.value().totalPages : 0,
   );
 
-  constructor() {
-    effect(() => {
-      const total = this.totalPages();
-      if (total > 0 && this.page() > total) {
-        this.router.navigate([], { queryParams: { page: total }, queryParamsHandling: 'merge', replaceUrl: true });
-      }
-    });
-  }
+constructor() {
+  effect(() => {
+    const total = this.totalPages();
+    if (total > 0 && this.page() > total) {
+      this.router.navigate([], { queryParams: { page: total }, queryParamsHandling: 'merge', replaceUrl: true });
+    }
+  });
+
+  this.nameInput$
+    .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed())
+    .subscribe(name => this.search({ name: name.trim() || null }));
+}
 
   protected goToPage(page: number): void {
     this.router.navigate([], { queryParams: { page }, queryParamsHandling: 'merge' });
