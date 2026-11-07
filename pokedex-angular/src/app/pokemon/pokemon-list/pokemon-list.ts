@@ -1,8 +1,8 @@
-import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
+import { Component, computed, effect, inject, input, numberAttribute, signal, Type } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { PokemonService } from '../../api/services/pokemon.service';
 import { PokedexNumberPipe } from '../pokedex-number-pipe';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, Params} from '@angular/router';
 import { PokemonCard } from '../pokemon-card/pokemon-card';   // ← 1: TypeScript conoce la clase
 
 @Component({
@@ -21,11 +21,26 @@ export class PokemonList {
     transform: (value: unknown) => Math.max(1, numberAttribute(value, 1)),
   });
 
-  protected readonly pokemons = rxResource({
-    params: () => this.page() - 1,
-    stream: ({ params: page }) => this.pokemonService.listPokemon({ page, size: this.pageSize }),
-  });
+  readonly name = input<string>();
+  readonly type = input<string>();
+  readonly sort = input<string>();
 
+protected readonly pokemons = rxResource({
+  params: () => ({
+    page: this.page() - 1,
+    name: this.name(),
+    type: this.type(),
+    sort: this.sort(),
+  }),
+  stream: ({ params }) =>
+    this.pokemonService.listPokemon({
+      page: params.page,
+      size: this.pageSize,
+      name: params.name,
+      type: params.type,
+      sort: params.sort ? [params.sort] : undefined,
+    }),
+});
   protected readonly totalPages = computed(() =>
     this.pokemons.hasValue() ? this.pokemons.value().totalPages : 0,
   );
@@ -42,5 +57,9 @@ export class PokemonList {
   protected goToPage(page: number): void {
     this.router.navigate([], { queryParams: { page } });
   }
+
+  protected search(changes: Params): void {
+  this.router.navigate([], { queryParams: { ...changes, page: 1 }, queryParamsHandling: 'merge' });
+}
 
 }
