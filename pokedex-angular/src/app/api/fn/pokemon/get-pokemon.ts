@@ -9,12 +9,12 @@ import { RequestBuilder } from '../../request-builder';
 
 import { PokemonResponse } from '../../models/pokemon-response';
 
-export interface GetByPokedexNumber$Params {
+export interface GetPokemon$Params {
   pokedexNumber: number;
 }
 
-export function getByPokedexNumber(http: HttpClient, rootUrl: string, params: GetByPokedexNumber$Params, context?: HttpContext): Observable<StrictHttpResponse<PokemonResponse>> {
-  const rb = new RequestBuilder(rootUrl, getByPokedexNumber.PATH, 'get');
+export function getPokemon(http: HttpClient, rootUrl: string, params: GetPokemon$Params, context?: HttpContext): Observable<StrictHttpResponse<PokemonResponse>> {
+  const rb = new RequestBuilder(rootUrl, getPokemon.PATH, 'get');
   if (params) {
     rb.path('pokedexNumber', params.pokedexNumber, {});
   }
@@ -29,4 +29,4 @@ export function getByPokedexNumber(http: HttpClient, rootUrl: string, params: Ge
   );
 }
 
-getByPokedexNumber.PATH = '/api/v1/pokemon/{pokedexNumber}';
+getPokemon.PATH = '/api/v1/pokemon/{pokedexNumber}';

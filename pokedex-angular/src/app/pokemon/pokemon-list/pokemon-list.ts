@@ -1,44 +1,102 @@
-import { Component, computed, effect, inject, input, numberAttribute, signal } from '@angular/core';
-import { rxResource } from '@angular/core/rxjs-interop';
+import { Component, computed, effect, inject, input, numberAttribute, signal, Type } from '@angular/core';
+import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PokemonService } from '../../api/services/pokemon.service';
 import { PokedexNumberPipe } from '../pokedex-number-pipe';
-import { Router, RouterLink } from '@angular/router';
+import { Router, RouterLink, Params} from '@angular/router';
+import { PokemonCard } from '../pokemon-card/pokemon-card';   // ← 1: TypeScript conoce la clase
+import { TypesService } from '../../api/services';
+import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
+import { StatsResponse } from '../../api/models';
 
 @Component({
-  imports: [PokedexNumberPipe, RouterLink],
+  imports: [PokemonCard, RouterLink],                          // ← 2: el template puede usar la etiqueta
   selector: 'app-pokemon-list',
   styleUrl: './pokemon-list.css',
   templateUrl: './pokemon-list.html',
 })
+
 export class PokemonList {
   private readonly pokemonService = inject(PokemonService);
   private readonly pageSize = 20;
   private readonly router = inject(Router);
+  private readonly typesService = inject(TypesService);
+  protected readonly sortOptions = [
+  { value: 'pokedexNumber', label: 'Number' },
+  { value: 'name', label: 'Name' },
+  { value: 'hp,desc', label: 'HP (highest first)' },
+  { value: 'attack,desc', label: 'Attack (highest first)' },
+  { value: 'defense,desc', label: 'Defense (highest first)' },
+  { value: 'specialAttack,desc', label: 'Sp. Attack (highest first)' },
+  { value: 'specialDefense,desc', label: 'Sp. Defense (highest first)' },
+  { value: 'speed,desc', label: 'Speed (highest first)' },
+];
 
   readonly page = input(1, {
     transform: (value: unknown) => Math.max(1, numberAttribute(value, 1)),
   });
 
-  protected readonly pokemons = rxResource({
-    params: () => this.page() - 1,
-    stream: ({ params: page }) => this.pokemonService.getAll({ page, size: this.pageSize }),
-  });
+  readonly name = input<string>();
+  readonly type = input<string>();
+  readonly sort = input<string>();
+  protected readonly nameInput$ = new Subject<string>();
 
+  private static readonly STAT_KEYS: (keyof StatsResponse)[] =
+  ['hp', 'attack', 'defense', 'specialAttack', 'specialDefense', 'speed'];
+
+protected readonly highlightedStat = computed(() => {
+  const field = this.sort()?.split(',')[0];
+  return PokemonList.STAT_KEYS.find(key => key === field);
+});
+
+  protected readonly types = rxResource({                  // el resource que usa el template
+  stream: () => this.typesService.listTypes(),
+});
+
+protected readonly pokemons = rxResource({
+  params: () => ({
+    page: this.page() - 1,
+    name: this.name(),
+    type: this.type(),
+    sort: this.sort(),
+  }),
+  stream: ({ params }) =>
+    this.pokemonService.listPokemon({
+      page: params.page,
+      size: this.pageSize,
+      name: params.name,
+      type: params.type,
+      sort: params.sort ? [params.sort] : undefined,
+    }),
+});
   protected readonly totalPages = computed(() =>
     this.pokemons.hasValue() ? this.pokemons.value().totalPages : 0,
   );
 
-  constructor() {
-    effect(() => {
-      const total = this.totalPages();
-      if (total > 0 && this.page() > total) {
-        this.router.navigate([], { queryParams: { page: total }, replaceUrl: true });
-      }
-    });
-  }
+constructor() {
+  effect(() => {
+    const total = this.totalPages();
+    if (total > 0 && this.page() > total) {
+      this.router.navigate([], { queryParams: { page: total }, queryParamsHandling: 'merge', replaceUrl: true });
+    }
+  });
+
+  this.nameInput$
+    .pipe(debounceTime(300), distinctUntilChanged(), takeUntilDestroyed())
+    .subscribe(name => this.search({ name: name.trim() || null }));
+}
 
   protected goToPage(page: number): void {
-    this.router.navigate([], { queryParams: { page } });
+    this.router.navigate([], { queryParams: { page }, queryParamsHandling: 'merge' });
   }
+
+  protected search(changes: Params): void {
+  this.router.navigate([], { queryParams: { ...changes, page: 1 }, queryParamsHandling: 'merge' });
+}
+
+protected clearFilters(): void {
+  this.search({ name: null, type: null, sort: null });
+}
+
+protected readonly hasActiveFilters = computed(() => !!(this.name() || this.type() || this.sort()));
 
 }

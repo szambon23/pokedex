@@ -10,10 +10,10 @@ import { BaseService } from '../base-service';
 import { ApiConfiguration } from '../api-configuration';
 import { StrictHttpResponse } from '../strict-http-response';
 
-import { getAll } from '../fn/pokemon/get-all';
-import { GetAll$Params } from '../fn/pokemon/get-all';
-import { getByPokedexNumber } from '../fn/pokemon/get-by-pokedex-number';
-import { GetByPokedexNumber$Params } from '../fn/pokemon/get-by-pokedex-number';
+import { getPokemon } from '../fn/pokemon/get-pokemon';
+import { GetPokemon$Params } from '../fn/pokemon/get-pokemon';
+import { listPokemon } from '../fn/pokemon/list-pokemon';
+import { ListPokemon$Params } from '../fn/pokemon/list-pokemon';
 import { PageResponsePokemonSummary } from '../models/page-response-pokemon-summary';
 import { PokemonResponse } from '../models/pokemon-response';
 
@@ -27,43 +27,43 @@ export class PokemonService extends BaseService {
     super(config, http);
   }
 
-  /** Path part for operation `getAll()` */
-  static readonly GetAllPath = '/api/v1/pokemon';
+  /** Path part for operation `listPokemon()` */
+  static readonly ListPokemonPath = '/api/v1/pokemon';
 
   /**
-   * List Pokemon, paginated.
+   * List Pokemon, paginated and filtered.
    *
-   * Returns a page of Pokemon summaries. By default, 20 per page sorted by Pokedex number. Use the page, size and sort parameters to change it (maximum page size: 100).
+   * Returns a page of Pokemon summaries. By default, 20 per page sorted by Pokedex number. Optional filters: name (contains, case-insensitive) and type (exact match, case-insensitive). Sortable properties: pokedexNumber, name, heightMeters, weightKg, hp, attack, defense, specialAttack, specialDefense, speed. Example: sort=speed,desc. Ties are broken by Pokedex number. Maximum page size: 100.
    *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getAll()` instead.
+   * To access only the response body, use `listPokemon()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll$Response(params?: GetAll$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponsePokemonSummary>> {
-    const obs = getAll(this.http, this.rootUrl, params, context);
+  listPokemon$Response(params?: ListPokemon$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponsePokemonSummary>> {
+    const obs = listPokemon(this.http, this.rootUrl, params, context);
     return obs;
   }
 
   /**
-   * List Pokemon, paginated.
+   * List Pokemon, paginated and filtered.
    *
-   * Returns a page of Pokemon summaries. By default, 20 per page sorted by Pokedex number. Use the page, size and sort parameters to change it (maximum page size: 100).
+   * Returns a page of Pokemon summaries. By default, 20 per page sorted by Pokedex number. Optional filters: name (contains, case-insensitive) and type (exact match, case-insensitive). Sortable properties: pokedexNumber, name, heightMeters, weightKg, hp, attack, defense, specialAttack, specialDefense, speed. Example: sort=speed,desc. Ties are broken by Pokedex number. Maximum page size: 100.
    *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getAll$Response()` instead.
+   * To access the full response (for headers, for example), `listPokemon$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getAll(params?: GetAll$Params, context?: HttpContext): Observable<PageResponsePokemonSummary> {
-    const resp = this.getAll$Response(params, context);
+  listPokemon(params?: ListPokemon$Params, context?: HttpContext): Observable<PageResponsePokemonSummary> {
+    const resp = this.listPokemon$Response(params, context);
     return resp.pipe(
       map((r: StrictHttpResponse<PageResponsePokemonSummary>): PageResponsePokemonSummary => r.body)
     );
   }
 
-  /** Path part for operation `getByPokedexNumber()` */
-  static readonly GetByPokedexNumberPath = '/api/v1/pokemon/{pokedexNumber}';
+  /** Path part for operation `getPokemon()` */
+  static readonly GetPokemonPath = '/api/v1/pokemon/{pokedexNumber}';
 
   /**
    * Get a Pokemon by its Pokedex number.
@@ -71,12 +71,12 @@ export class PokemonService extends BaseService {
    *
    *
    * This method provides access to the full `HttpResponse`, allowing access to response headers.
-   * To access only the response body, use `getByPokedexNumber()` instead.
+   * To access only the response body, use `getPokemon()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getByPokedexNumber$Response(params: GetByPokedexNumber$Params, context?: HttpContext): Observable<StrictHttpResponse<PokemonResponse>> {
-    const obs = getByPokedexNumber(this.http, this.rootUrl, params, context);
+  getPokemon$Response(params: GetPokemon$Params, context?: HttpContext): Observable<StrictHttpResponse<PokemonResponse>> {
+    const obs = getPokemon(this.http, this.rootUrl, params, context);
     return obs;
   }
 
@@ -86,12 +86,12 @@ export class PokemonService extends BaseService {
    *
    *
    * This method provides access only to the response body.
-   * To access the full response (for headers, for example), `getByPokedexNumber$Response()` instead.
+   * To access the full response (for headers, for example), `getPokemon$Response()` instead.
    *
    * This method doesn't expect any request body.
    */
-  getByPokedexNumber(params: GetByPokedexNumber$Params, context?: HttpContext): Observable<PokemonResponse> {
-    const resp = this.getByPokedexNumber$Response(params, context);
+  getPokemon(params: GetPokemon$Params, context?: HttpContext): Observable<PokemonResponse> {
+    const resp = this.getPokemon$Response(params, context);
     return resp.pipe(
       map((r: StrictHttpResponse<PokemonResponse>): PokemonResponse => r.body)
     );

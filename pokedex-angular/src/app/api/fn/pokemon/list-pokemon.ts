@@ -9,7 +9,17 @@ import { RequestBuilder } from '../../request-builder';
 
 import { PageResponsePokemonSummary } from '../../models/page-response-pokemon-summary';
 
-export interface GetAll$Params {
+export interface ListPokemon$Params {
+
+/**
+ * Part of the name, case-insensitive
+ */
+  name?: string;
+
+/**
+ * Exact type name, case-insensitive
+ */
+  type?: string;
 
 /**
  * Zero-based page index (0..N)
@@ -27,9 +37,11 @@ export interface GetAll$Params {
   sort?: Array<string>;
 }
 
-export function getAll(http: HttpClient, rootUrl: string, params?: GetAll$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponsePokemonSummary>> {
-  const rb = new RequestBuilder(rootUrl, getAll.PATH, 'get');
+export function listPokemon(http: HttpClient, rootUrl: string, params?: ListPokemon$Params, context?: HttpContext): Observable<StrictHttpResponse<PageResponsePokemonSummary>> {
+  const rb = new RequestBuilder(rootUrl, listPokemon.PATH, 'get');
   if (params) {
+    rb.query('name', params.name, {});
+    rb.query('type', params.type, {});
     rb.query('page', params.page, {});
     rb.query('size', params.size, {});
     rb.query('sort', params.sort, {});
@@ -45,4 +57,4 @@ export function getAll(http: HttpClient, rootUrl: string, params?: GetAll$Params
   );
 }
 
-getAll.PATH = '/api/v1/pokemon';
+listPokemon.PATH = '/api/v1/pokemon';

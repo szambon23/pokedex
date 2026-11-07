@@ -18,9 +18,9 @@ Blocks are listed in the order they're being built: backend blocks are numbered,
 | 6 | PokéAPI client | Backend | HTTP client with `@HttpExchange` | ✅ |
 | 7 | Gen 1 importer | Backend | Idempotent import of the 151 Gen 1 Pokémon, `changeTypes` | ✅ |
 | B | Pagination | Frontend | Pagination controls for the full list | ✅ |
-| 8 | Search & filters | Backend | Search filters, V2 migration (generation), `GET /types`, sort-field whitelist | 🔜 |
-| C | Search UI | Frontend | Filters and search in the list | ⬜ |
-| 10 | Teams | Backend | Teams of up to 6 Pokémon, `POST` returns 201 + `Location` | ⬜ |
+| 8 | Search & filters | Backend | Search filters, V2 migration (generation), `GET /types`, sort-field whitelist | ✅ |
+| C | Search UI | Frontend | Filters and search in the list | ✅ |
+| 10 | Teams | Backend | Teams of up to 6 Pokémon, `POST` returns 201 + `Location` | 🔜 |
 | D | Teams UI | Frontend | Create and view teams | ⬜ |
 | 11 | Performance | Backend | N+1 in the list, indexes, caching | ⬜ |
 | 12 | Security | Backend | Security, CORS, protect Swagger in production | ⬜ |
@@ -36,9 +36,5 @@ Pending items, each linked to the block that fixes it.
 |Generation filter postponed until more generations are imported| 11 |
 | N+1 queries when loading the list | 11 |
 | Swagger UI is public | 12 |
-| Pokémon card is not extracted into its own component | B |
-| Type colors cover only 6 of the 18 types | B |
-| Broken sprite URLs (image fails to load) are not handled | B |
-| Base stats are a plain list (bars planned) | C |
-|The list response doesn’t include stats, so sorting by a stat isn’t visible on the cards| C |
+|An invalid sort in the URL shows a generic error instead of the API’s message| D |
 | No frontend tests | — |
