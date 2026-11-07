@@ -17,3 +17,9 @@
   gap: 8px;
   margin-top: 1.5rem;
 }
+
+.filters{
+  display: flex;
+  gap: 8px;
+  margin-bottom: 1.5rem;
+}

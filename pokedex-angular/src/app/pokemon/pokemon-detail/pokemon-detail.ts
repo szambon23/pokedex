@@ -1,13 +1,13 @@
 import { Component, computed, effect, inject, input, numberAttribute } from '@angular/core';
 import { Location } from '@angular/common';
-import { PokemonService } from '../../api/services';
+import { PokemonService, TypesService } from '../../api/services';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { PokedexNumberPipe } from '../pokedex-number-pipe';
 import { RouterLink } from '@angular/router';
 import { HttpErrorResponse } from '@angular/common/http';
 
 @Component({
-  imports: [PokedexNumberPipe, RouterLink],
+  imports: [PokedexNumberPipe],
   selector: 'app-pokemon-detail',
   styleUrl: './pokemon-detail.css',
   templateUrl: './pokemon-detail.html',

@@ -1,3 +1,21 @@
+<div class="filters">
+  <select #typeSelect (change)="search({ type: typeSelect.value || null })">
+    <option value="">All types</option>
+    @for (t of types.value() ?? []; track t.name) {
+      <option [value]="t.name" [selected]="t.name === type()">{{ t.name }}</option>
+    }
+  </select>
+
+  <select #sortSelect (change)="search({ sort: sortSelect.value })">
+    @for (option of sortOptions; track option.value) {
+      <option [value]="option.value" [selected]="option.value === (sort() ?? 'pokedexNumber')">
+        {{ option.label }}
+      </option>
+    }
+  </select>
+</div>
+
+
 @if (pokemons.isLoading()) {
   <p>Loading...</p>
 } @else if (pokemons.error()) {

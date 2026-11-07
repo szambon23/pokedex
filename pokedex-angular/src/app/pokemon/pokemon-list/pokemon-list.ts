@@ -4,6 +4,7 @@ import { PokemonService } from '../../api/services/pokemon.service';
 import { PokedexNumberPipe } from '../pokedex-number-pipe';
 import { Router, RouterLink, Params} from '@angular/router';
 import { PokemonCard } from '../pokemon-card/pokemon-card';   // ← 1: TypeScript conoce la clase
+import { TypesService } from '../../api/services';
 
 @Component({
   imports: [PokemonCard, RouterLink],                          // ← 2: el template puede usar la etiqueta
@@ -16,6 +17,17 @@ export class PokemonList {
   private readonly pokemonService = inject(PokemonService);
   private readonly pageSize = 20;
   private readonly router = inject(Router);
+  private readonly typesService = inject(TypesService);
+  protected readonly sortOptions = [
+  { value: 'pokedexNumber', label: 'Number' },
+  { value: 'name', label: 'Name' },
+  { value: 'hp,desc', label: 'HP (highest first)' },
+  { value: 'attack,desc', label: 'Attack (highest first)' },
+  { value: 'defense,desc', label: 'Defense (highest first)' },
+  { value: 'specialAttack,desc', label: 'Sp. Attack (highest first)' },
+  { value: 'specialDefense,desc', label: 'Sp. Defense (highest first)' },
+  { value: 'speed,desc', label: 'Speed (highest first)' },
+];
 
   readonly page = input(1, {
     transform: (value: unknown) => Math.max(1, numberAttribute(value, 1)),
@@ -24,6 +36,10 @@ export class PokemonList {
   readonly name = input<string>();
   readonly type = input<string>();
   readonly sort = input<string>();
+
+  protected readonly types = rxResource({                  // el resource que usa el template
+  stream: () => this.typesService.listTypes(),
+});
 
 protected readonly pokemons = rxResource({
   params: () => ({
@@ -49,13 +65,13 @@ protected readonly pokemons = rxResource({
     effect(() => {
       const total = this.totalPages();
       if (total > 0 && this.page() > total) {
-        this.router.navigate([], { queryParams: { page: total }, replaceUrl: true });
+        this.router.navigate([], { queryParams: { page: total }, queryParamsHandling: 'merge', replaceUrl: true });
       }
     });
   }
 
   protected goToPage(page: number): void {
-    this.router.navigate([], { queryParams: { page } });
+    this.router.navigate([], { queryParams: { page }, queryParamsHandling: 'merge' });
   }
 
   protected search(changes: Params): void {
