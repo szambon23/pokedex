@@ -108,7 +108,7 @@ class TeamTest {
 
         team.enableSpeciesClause();
 
-        assertThat(team.getSpeciesClause()).isTrue();
+        assertThat(team.isSpeciesClause()).isTrue();
     }
 
     @Test
@@ -123,7 +123,7 @@ class TeamTest {
         assertThatThrownBy(team::enableSpeciesClause)
                 .isInstanceOfSatisfying(SpeciesClauseViolationException.class,
                         ex -> assertThat(ex.getDuplicatedPokedexNumbers()).containsExactly(25));
-        assertThat(team.getSpeciesClause()).isFalse();
+        assertThat(team.isSpeciesClause()).isFalse();
 
     }
 

@@ -21,7 +21,6 @@ public class Team {
     @Getter
     private String name;
 
-    @Getter
     private boolean speciesClause;
 
     @Getter
@@ -92,7 +91,7 @@ public class Team {
         return Collections.unmodifiableList(members);
     }
 
-    public boolean getSpeciesClause() {
+    public boolean isSpeciesClause() {
         return speciesClause;
     }
 }
