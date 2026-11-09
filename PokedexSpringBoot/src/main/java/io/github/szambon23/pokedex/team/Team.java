@@ -91,4 +91,8 @@ public class Team {
     public List<Pokemon> getMembers() {
         return Collections.unmodifiableList(members);
     }
+
+    public boolean getSpeciesClause() {
+        return speciesClause;
+    }
 }
