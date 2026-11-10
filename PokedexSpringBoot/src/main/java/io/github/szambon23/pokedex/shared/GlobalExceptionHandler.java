@@ -1,10 +1,7 @@
 package io.github.szambon23.pokedex.shared;
 
 import io.github.szambon23.pokedex.pokemon.PokemonNotFoundException;
-import io.github.szambon23.pokedex.team.DuplicateSpeciesException;
-import io.github.szambon23.pokedex.team.SpeciesClauseViolationException;
-import io.github.szambon23.pokedex.team.TeamFullException;
-import io.github.szambon23.pokedex.team.UnknownPokemonException;
+import io.github.szambon23.pokedex.team.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.MessageSourceResolvable;
@@ -149,5 +146,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problem.setTitle("Species c violation");
         problem.setProperty("duplicatedPokedexNumbers", ex.getDuplicatedPokedexNumbers());
         return problem;
+    }
+
+    @ExceptionHandler(TeamNotFoundException.class)
+    public ProblemDetail handleTeamNotFound(TeamNotFoundException ex) {
+        ProblemDetail problemDetail =
+                ProblemDetail.forStatusAndDetail(HttpStatus.NOT_FOUND, ex.getMessage());
+        problemDetail.setTitle("Team not found");
+        problemDetail.setProperty("teamId", ex.getTeamId());
+        return problemDetail;
     }
 }
