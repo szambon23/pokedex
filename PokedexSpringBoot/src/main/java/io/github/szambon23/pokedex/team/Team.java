@@ -2,9 +2,7 @@ package io.github.szambon23.pokedex.team;
 
 import io.github.szambon23.pokedex.pokemon.Pokemon;
 import jakarta.persistence.*;
-import jakarta.persistence.Id;
 import lombok.Getter;
-import lombok.Setter;
 
 import java.time.Instant;
 import java.util.*;

@@ -1,6 +1,7 @@
 package io.github.szambon23.pokedex.team;
 
-import io.github.szambon23.pokedex.pokemon.*;
+import io.github.szambon23.pokedex.pokemon.Pokemon;
+import io.github.szambon23.pokedex.pokemon.PokemonRepository;
 import io.github.szambon23.pokedex.team.dto.CreateTeamRequest;
 import io.github.szambon23.pokedex.team.dto.TeamResponse;
 import org.springframework.stereotype.Service;

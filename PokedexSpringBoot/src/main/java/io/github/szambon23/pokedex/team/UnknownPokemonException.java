@@ -1,6 +1,7 @@
 package io.github.szambon23.pokedex.team;
 
 public class UnknownPokemonException extends RuntimeException {
+
     private final int pokedexNumber;
 
     public UnknownPokemonException(int pokedexNumber) {

@@ -1,6 +1,5 @@
 package io.github.szambon23.pokedex.team;
 
-import io.github.szambon23.pokedex.pokemon.PokemonService;
 import io.github.szambon23.pokedex.team.dto.CreateTeamRequest;
 import io.github.szambon23.pokedex.team.dto.TeamResponse;
 import io.swagger.v3.oas.annotations.Operation;
