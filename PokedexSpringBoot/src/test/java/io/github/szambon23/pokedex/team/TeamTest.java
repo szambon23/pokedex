@@ -8,11 +8,12 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.NullAndEmptySource;
 import org.junit.jupiter.params.provider.ValueSource;
 
+import java.util.List;
+
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class TeamTest {
-
     @ParameterizedTest
     @NullAndEmptySource
     @ValueSource(strings = {"   "})
@@ -99,41 +100,80 @@ class TeamTest {
     }
 
     @Test
-    void enablesClauseWhenThereAreNoDuplicates() {
-        Team team = new Team("We allow twins for a time", false);
-
+    void updateReplacesNameClauseAndMembers() {
+        Team team = new Team("Friends", false);
         team.addMember(pokemon(25, "pikachu"));
         team.addMember(pokemon(1, "bulbasaur"));
-        team.addMember(pokemon(150, "mewtwo"));
 
-        team.enableSpeciesClause();
+        team.update("Rivals", true, List.of(pokemon(150, "mewtwo"), pokemon(4, "charmander")));
 
+        assertThat(team.getName()).isEqualTo("Rivals");
         assertThat(team.isSpeciesClause()).isTrue();
+        assertThat(team.getMembers()).extracting(Pokemon::getName).containsExactly("mewtwo", "charmander");
     }
 
     @Test
-    void refusesToEnableClauseWithDuplicates() {
-        Team team = new Team("We allow twins for a time", false);
+    void updateEnablesClauseEvenIfOldMembersHadDuplicates() {
+        Team team = new Team("Twins", false);
+        team.addMember(pokemon(25, "pikachu"));
+        team.addMember(pokemon(25, "pikachu"));
 
+        team.update("Twins", true, List.of(pokemon(1, "bulbasaur"), pokemon(4, "charmander")));
+
+        assertThat(team.isSpeciesClause()).isTrue();
+        assertThat(team.getMembers()).extracting(Pokemon::getName).containsExactly("bulbasaur", "charmander");
+    }
+
+    @Test
+    void updateRejectsDuplicatesWhenClauseIsEnabled() {
+        Team team = new Team("Friends", false);
+
+        assertThatThrownBy(() -> team.update("Friends", true,
+                List.of(pokemon(25, "pikachu"), pokemon(1, "bulbasaur"), pokemon(25, "pikachu"))))
+                .isInstanceOf(DuplicateSpeciesException.class)
+                .hasMessageContaining("#25");
+    }
+
+    @Test
+    void updateAllowsDuplicatesWhenClauseIsDisabled() {
+        Team team = new Team("Not really relevant", true);
+
+        team.update("Not really relevant", false, List.of(pokemon(25, "pikachu"),  pokemon(25, "pikachu")));
+
+        assertThat(team.getMembers()).extracting(Pokemon::getName).containsExactly("pikachu", "pikachu");
+        assertThat(team.isSpeciesClause()).isFalse();
+    }
+
+    @Test
+    void updateAllowsEmptyMembers() {
+        Team team = new Team("Friends", false);
         team.addMember(pokemon(25, "pikachu"));
         team.addMember(pokemon(1, "bulbasaur"));
-        team.addMember(pokemon(150, "mewtwo"));
-        team.addMember(pokemon(25, "pikachu"));
 
-        assertThatThrownBy(team::enableSpeciesClause)
-                .isInstanceOfSatisfying(SpeciesClauseViolationException.class,
-                        ex -> assertThat(ex.getDuplicatedPokedexNumbers()).containsExactly(25));
-        assertThat(team.isSpeciesClause()).isFalse();
+        team.update("Friends", false, List.of());
 
+        assertThat(team.getMembers()).isEmpty();
     }
+
+    @Test
+    void updateWithBlankNameLeavesTeamUnchanged() {
+        Team team = new Team("Friends", false);
+        team.addMember(pokemon(25, "pikachu"));
+        team.addMember(pokemon(1, "bulbasaur"));
+
+        assertThatThrownBy(() -> team.update(" ", true, List.of(pokemon(150, "mewtwo"), pokemon(4, "charmander"))))
+                .isInstanceOf(IllegalArgumentException.class);
+
+        assertThat(team.getName()).isEqualTo("Friends");
+        assertThat(team.isSpeciesClause()).isFalse();
+        assertThat(team.getMembers()).extracting(Pokemon::getName).containsExactly("pikachu", "bulbasaur");
+    }
+
 
     private static Pokemon pokemon(int pokedexNumber, String name) {
         return new Pokemon(pokedexNumber, name, 10, 100, null,
                 new BaseStats(50, 50, 50, 50, 50, 50), new Type("normal"));
     }
-
-
-
 }
 
 

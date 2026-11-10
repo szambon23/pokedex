@@ -20,6 +20,7 @@ public class Team {
     @Getter
     private String name;
 
+    @Getter
     private boolean speciesClause;
 
     @Getter
@@ -33,20 +34,22 @@ public class Team {
     private List<Pokemon> members = new ArrayList<>();
 
     public Team(String name, boolean speciesClause) {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("Team name must not be blank");
-        }
-        if (name.length() > MAX_NAME_LENGTH) {
-            throw new IllegalArgumentException("Team name must be at most " + MAX_NAME_LENGTH + " characters");
-        }
-
-        this.name = name;
+        this.name = requireValidName(name);
         this.speciesClause = speciesClause;
         this.createdAt = Instant.now().truncatedTo(ChronoUnit.MICROS);
     }
 
     protected Team() {
     }
+
+    public void update(String name, boolean speciesClause, List<Pokemon> newMembers) {
+        Objects.requireNonNull(newMembers, "Members must not be null");
+        this.name = requireValidName(name);
+        this.speciesClause = speciesClause;
+        this.members.clear();
+        newMembers.forEach(this::addMember);
+    }
+
 
     public void addMember(Pokemon pokemon) {
         Objects.requireNonNull(pokemon);
@@ -57,14 +60,6 @@ public class Team {
             throw new DuplicateSpeciesException(pokemon.getPokedexNumber());
         }
         members.add(pokemon);
-    }
-
-    public void enableSpeciesClause() {
-        List<Integer> duplicated = duplicatedPokedexNumbers();
-        if (!duplicated.isEmpty()) {
-            throw new SpeciesClauseViolationException(duplicated);
-        }
-        this.speciesClause = true;
     }
 
     private boolean containsSpecies(Pokemon pokemon) {
@@ -90,7 +85,14 @@ public class Team {
         return Collections.unmodifiableList(members);
     }
 
-    public boolean isSpeciesClause() {
-        return speciesClause;
+    public static String requireValidName(String name) {
+        if (name == null || name.isBlank()) {
+            throw new IllegalArgumentException("Team name must not be blank");
+        }
+        if (name.length() > MAX_NAME_LENGTH) {
+            throw new IllegalArgumentException("Team name must be at most " + MAX_NAME_LENGTH + " characters");
+        }
+        return name;
     }
+
 }

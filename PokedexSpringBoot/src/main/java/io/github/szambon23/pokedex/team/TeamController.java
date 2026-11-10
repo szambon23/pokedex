@@ -1,6 +1,6 @@
 package io.github.szambon23.pokedex.team;
 
-import io.github.szambon23.pokedex.team.dto.CreateTeamRequest;
+import io.github.szambon23.pokedex.team.dto.TeamRequest;
 import io.github.szambon23.pokedex.team.dto.TeamResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,7 +19,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/teams")
-@Tag(name = "Teams", description = "Create and browse Pokemon teams of up to 6 members.")
+@Tag(name = "Teams", description = "Create, browse, edit and ,soon, delete Pokemon teams of up to 6 members.")
 public class TeamController {
     private final TeamService teamService;
 
@@ -34,10 +34,14 @@ public class TeamController {
             @ApiResponse(responseCode = "201", description = "The team was created. The Location header points to it."),
             @ApiResponse(responseCode = "400", description = "Invalid request.",
                     content = @Content(mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class))),
+            @ApiResponse(responseCode = "422",
+                    description = "A Pokemon doesn't exist, or a species is repeated with speciesClause enabled.",
+                    content = @Content(mediaType = "application/problem+json",
                             schema = @Schema(implementation = ProblemDetail.class)))
     })
     @PostMapping
-    public ResponseEntity<TeamResponse> create(@Valid @RequestBody CreateTeamRequest request) {
+    public ResponseEntity<TeamResponse> create(@Valid @RequestBody TeamRequest request) {
         TeamResponse created = teamService.create(request);
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -49,6 +53,9 @@ public class TeamController {
     @Operation(operationId = "getTeam", summary = "Get a team by its id")
     @ApiResponses({
             @ApiResponse(responseCode = "200", description = "The team was found."),
+            @ApiResponse(responseCode = "400", description = "The id is not a valid UUID.",
+                    content = @Content(mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class))),
             @ApiResponse(responseCode = "404", description = "No team exists with that id.",
                     content = @Content(mediaType = "application/problem+json",
                             schema = @Schema(implementation = ProblemDetail.class)))
@@ -56,5 +63,26 @@ public class TeamController {
     @GetMapping("/{id}")
     public TeamResponse getById(@PathVariable UUID id) {
         return teamService.findById(id);
+    }
+
+    @Operation(operationId = "updateTeam", summary = "Replace a team",
+            description = "Replaces the name, speciesClause and members of an existing team. "
+                    + "Members keep the given order. An empty list leaves the team without members.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "The team was replaced."),
+            @ApiResponse(responseCode = "400", description = "Invalid id or request body.",
+                    content = @Content(mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class))),
+            @ApiResponse(responseCode = "404", description = "No team exists with that id.",
+                    content = @Content(mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class))),
+            @ApiResponse(responseCode = "422",
+                    description = "A Pokemon doesn't exist, or a species is repeated with speciesClause enabled.",
+                    content = @Content(mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)))
+    })
+    @PutMapping("/{id}")
+    public TeamResponse update(@PathVariable UUID id, @Valid @RequestBody TeamRequest request) {
+        return teamService.update(id, request);
     }
 }

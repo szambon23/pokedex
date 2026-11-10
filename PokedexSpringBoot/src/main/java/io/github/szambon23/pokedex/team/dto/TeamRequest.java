@@ -7,13 +7,14 @@ import jakarta.validation.constraints.Size;
 
 import java.util.List;
 
-public record CreateTeamRequest(
+public record TeamRequest(
         @NotBlank(message = "must not be blank")
         @Size(max = 50, message = "must be at most 50 characters") String name,
-        boolean speciesClause,
+        Boolean speciesClause,
         @Size(max = 6, message = "must have at most 6 members")
         List<@NotNull(message = "must not be null") @Positive(message = "must be a positive integer") Integer> pokedexNumbers) {
-    public CreateTeamRequest {
+    public TeamRequest {
+        speciesClause = speciesClause != null && speciesClause;
         pokedexNumbers = pokedexNumbers == null ? List.of() : pokedexNumbers;
     }
 }
