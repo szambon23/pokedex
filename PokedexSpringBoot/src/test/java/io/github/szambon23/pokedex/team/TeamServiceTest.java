@@ -62,6 +62,23 @@ class TeamServiceTest {
     }
 
     @Test
+    void updatePersistsChangesAndKeepsCreatedAt() {
+        TeamResponse created = teamService.create(new TeamRequest("Kanto starters", false, List.of(1, 4, 7)));
+        entityManager.flush();
+        entityManager.clear();
+
+        teamService.update(created.id(), new TeamRequest("Kanto base starters", true, List.of(7, 1)));
+        entityManager.flush();
+        entityManager.clear();
+
+        Team reloaded = teamRepository.findById(created.id()).orElseThrow();
+        assertThat(reloaded.getName()).isEqualTo("Kanto base starters");
+        assertThat(reloaded.isSpeciesClause()).isTrue();
+        assertThat(reloaded.getMembers()).extracting(Pokemon::getPokedexNumber).containsExactly(7, 1);
+        assertThat(reloaded.getCreatedAt()).isEqualTo(created.createdAt());
+    }
+
+    @Test
     void persistsNameWithMaxLength() {
         TeamResponse created = teamService.create(new TeamRequest("a".repeat(50), false, List.of()));
         entityManager.flush();

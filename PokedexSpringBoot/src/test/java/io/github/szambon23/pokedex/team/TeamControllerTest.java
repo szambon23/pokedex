@@ -19,6 +19,7 @@ import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
@@ -32,10 +33,11 @@ class TeamControllerTest {
 
     @Test
     void createReturns201WithLocation() {
-        UUID id = UUID.randomUUID();
-        TeamResponse created = new TeamResponse(id, "Kanto starters", false, Instant.now(), List.of());
-        when(teamService.create(any(TeamRequest.class))).thenReturn(created);
-
+        UUID id = UUID.fromString("3f2b8c1e-6d4a-4b7e-9c2f-1a5d8e7b6c40");
+        TeamRequest request = new TeamRequest("Kanto starters", false, List.of(1, 4, 7));
+        TeamResponse created = new TeamResponse(id, "Kanto starters", false,
+                Instant.parse("2026-11-09T21:00:46.782165Z"), List.of());
+        when(teamService.create(request)).thenReturn(created);
         MvcTestResult result = mvc.post().uri("/api/v1/teams")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
@@ -74,8 +76,8 @@ class TeamControllerTest {
         MvcTestResult result = mvc.post().uri("/api/v1/teams")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
-                    { "name": "With a ghost", "pokedexNumbers": [1, 999] }
-                    """)
+                        { "name": "With a ghost", "pokedexNumbers": [1, 999] }
+                        """)
                 .exchange();
 
         assertThat(result).hasStatus(HttpStatus.UNPROCESSABLE_CONTENT);
@@ -91,8 +93,8 @@ class TeamControllerTest {
         MvcTestResult result = mvc.post().uri("/api/v1/teams")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content("""
-                    { "name": "Pikachu twins", "speciesClause": true, "pokedexNumbers": [25, 25] }
-                    """)
+                        { "name": "Pikachu twins", "speciesClause": true, "pokedexNumbers": [25, 25] }
+                        """)
                 .exchange();
 
         assertThat(result).hasStatus(HttpStatus.UNPROCESSABLE_CONTENT);
@@ -139,12 +141,56 @@ class TeamControllerTest {
         verifyNoInteractions(teamService);
     }
 
+    @Test
+    void updateReturns200WithTeam() {
+        UUID id = UUID.fromString("3f2b8c1e-6d4a-4b7e-9c2f-1a5d8e7b6c40");
+        TeamRequest request = new TeamRequest("Rivals", true, List.of(150, 4));
+        TeamResponse response = new TeamResponse(id, "Rivals", true,
+                Instant.parse("2026-11-01T12:00:00Z"), List.of());
+        when(teamService.update(eq(id), eq(request))).thenReturn(response);
+
+        MvcTestResult result = mvc.put().uri("/api/v1/teams/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"name": "Rivals", "speciesClause": true, "pokedexNumbers": [150, 4]}
+                        """)
+                .exchange();
+
+        assertThat(result).hasStatusOk();
+        assertThat(result).bodyJson().extractingPath("$.id").isEqualTo(id.toString());
+        assertThat(result).bodyJson().extractingPath("$.name").isEqualTo("Rivals");
+    }
+
+    @Test
+    void updateReturns404WhenTeamDoesNotExist() {
+        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000000");
+        when(teamService.update(eq(id), any())).thenThrow(new TeamNotFoundException(id));
+
+        assertThat(mvc.put().uri("/api/v1/teams/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"name": "Rivals", "speciesClause": false, "pokedexNumbers": []}
+                        """))
+                .hasStatus(HttpStatus.NOT_FOUND)
+                .bodyJson()
+                .extractingPath("$.teamId").isEqualTo(id.toString());
+    }
+
+    @Test
+    void updateReturns400WhenBodyIsInvalid() {
+        UUID id = UUID.fromString("3f2b8c1e-6d4a-4b7e-9c2f-1a5d8e7b6c40");
+
+        assertThat(mvc.put().uri("/api/v1/teams/{id}", id)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("""
+                        {"name": "", "speciesClause": false, "pokedexNumbers": []}
+                        """))
+                .hasStatus(HttpStatus.BAD_REQUEST)
+                .bodyJson()
+                .extractingPath("$.errors[*].field").asArray().containsExactly("name");
+
+        verifyNoInteractions(teamService);
+    }
 
 
-
-
-
-
-
-    
 }
