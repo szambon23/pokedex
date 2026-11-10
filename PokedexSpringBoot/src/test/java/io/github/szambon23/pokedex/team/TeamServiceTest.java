@@ -3,6 +3,7 @@ package io.github.szambon23.pokedex.team;
 import io.github.szambon23.pokedex.pokemon.BaseStats;
 import io.github.szambon23.pokedex.pokemon.Pokemon;
 import io.github.szambon23.pokedex.pokemon.PokemonMapper;
+import io.github.szambon23.pokedex.shared.PageResponse;
 import io.github.szambon23.pokedex.team.dto.TeamRequest;
 import io.github.szambon23.pokedex.type.Type;
 import org.junit.jupiter.api.BeforeEach;
@@ -112,8 +113,23 @@ class TeamServiceTest {
                 .isInstanceOf(TeamNotFoundException.class);
     }
 
+    @Test
+    void findAllReturnsTeamsInCreationOrder() {
+        TeamResponse first = teamService.create(new TeamRequest("team1", false, List.of())),
+        second = teamService.create(new TeamRequest("team2", false, List.of())),
+        third = teamService.create(new TeamRequest("team3", false, List.of()));
 
+        entityManager.flush();
+        entityManager.clear();
 
+        PageResponse<TeamResponse> page1 = teamService.findAll(0, 2);
+        PageResponse<TeamResponse> page2 = teamService.findAll(1, 2);
+
+        assertThat(page1.content()).extracting(TeamResponse::name).containsExactly("team1", "team2");
+        assertThat(page1.totalElements()).isEqualTo(3);
+
+        assertThat(page2.content()).extracting(TeamResponse::name).containsExactly("team3");
+    }
 
     private static BaseStats stats() {
         return new BaseStats(50, 50, 50, 50, 50, 50);

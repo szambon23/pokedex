@@ -2,11 +2,15 @@ package io.github.szambon23.pokedex.team;
 
 import io.github.szambon23.pokedex.pokemon.dto.PokemonSummary;
 import io.github.szambon23.pokedex.pokemon.dto.StatsResponse;
+import io.github.szambon23.pokedex.shared.PageResponse;
 import io.github.szambon23.pokedex.team.dto.TeamRequest;
 import io.github.szambon23.pokedex.team.dto.TeamResponse;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.CsvSource;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
@@ -192,5 +196,42 @@ class TeamControllerTest {
         verifyNoInteractions(teamService);
     }
 
+    @Test
+    void listUsesDefaultPageAndSize() {
+        UUID id = UUID.fromString("3f2b8c1e-6d4a-4b7e-9c2f-1a5d8e7b6c40");
+        TeamResponse team = new TeamResponse(id, "First team", false,
+                Instant.parse("2026-11-01T12:00:00Z"), List.of());
+        when(teamService.findAll(0, 20)).thenReturn(PageResponse.from(new PageImpl<>(List.of(team))));
 
+        MvcTestResult result = mvc.get().uri("/api/v1/teams").exchange();
+
+        assertThat(result).hasStatusOk();
+        assertThat(result).bodyJson().extractingPath("$.content[0].name").isEqualTo("First team");
+    }
+
+    @Test
+    void listAcceptsMaxSize() {
+        UUID id = UUID.fromString("3f2b8c1e-6d4a-4b7e-9c2f-1a5d8e7b6c40");
+        TeamResponse team = new TeamResponse(id, "First team", false,
+                Instant.parse("2026-11-01T12:00:00Z"), List.of());
+        when(teamService.findAll(0, 100)).thenReturn(PageResponse.from(new PageImpl<>(List.of(team))));
+
+        MvcTestResult result = mvc.get().uri("/api/v1/teams").param("size", "100").exchange();
+
+        assertThat(result).hasStatusOk();
+        assertThat(result).bodyJson().extractingPath("$.content[0].name").isEqualTo("First team");
+    }
+    @ParameterizedTest
+    @CsvSource({
+            "page, -1,  page: must be at least 0",
+            "size, 0,   size: must be at least 1",
+            "size, 101, size: must be at most 100"
+    })
+    void listReturns400WhenPageOrSizeIsInvalid(String param, String value, String detail) {
+        MvcTestResult result = mvc.get().uri("/api/v1/teams").param(param, value).exchange();
+
+        assertThat(result).hasStatus(HttpStatus.BAD_REQUEST);
+        assertThat(result).bodyJson().extractingPath("$.detail").isEqualTo(detail);
+        verifyNoInteractions(teamService);
+    }
 }

@@ -1,5 +1,6 @@
 package io.github.szambon23.pokedex.team;
 
+import io.github.szambon23.pokedex.shared.PageResponse;
 import io.github.szambon23.pokedex.team.dto.TeamRequest;
 import io.github.szambon23.pokedex.team.dto.TeamResponse;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +10,8 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Min;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +22,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/v1/teams")
-@Tag(name = "Teams", description = "Create, browse, edit and ,soon, delete Pokemon teams of up to 6 members.")
+@Tag(name = "Teams", description = "Create, browse, edit and delete Pokemon teams of up to 6 members.")
 public class TeamController {
     private final TeamService teamService;
 
@@ -84,5 +87,21 @@ public class TeamController {
     @PutMapping("/{id}")
     public TeamResponse update(@PathVariable UUID id, @Valid @RequestBody TeamRequest request) {
         return teamService.update(id, request);
+    }
+
+    @Operation(operationId = "listTeams", summary = "List teams",
+            description = "Returns teams in creation order, oldest first.")
+    @ApiResponses({
+            @ApiResponse(responseCode = "200", description = "A page of teams."),
+            @ApiResponse(responseCode = "400", description = "Invalid page or size.",
+                    content = @Content(mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)))
+    })
+    @GetMapping
+    public PageResponse<TeamResponse> list(
+            @RequestParam(defaultValue = "0") @Min(value = 0, message = "must be at least 0") int page,
+            @RequestParam(defaultValue = "20") @Min(value = 1, message = "must be at least 1")
+            @Max(value = 100, message = "must be at most 100") int size) {
+        return teamService.findAll(page, size);
     }
 }

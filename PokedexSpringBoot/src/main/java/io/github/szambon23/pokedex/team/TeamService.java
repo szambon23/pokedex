@@ -2,8 +2,12 @@ package io.github.szambon23.pokedex.team;
 
 import io.github.szambon23.pokedex.pokemon.Pokemon;
 import io.github.szambon23.pokedex.pokemon.PokemonRepository;
+import io.github.szambon23.pokedex.shared.PageResponse;
 import io.github.szambon23.pokedex.team.dto.TeamRequest;
 import io.github.szambon23.pokedex.team.dto.TeamResponse;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -13,7 +17,7 @@ import java.util.UUID;
 @Service
 @Transactional(readOnly = true)
 public class TeamService {
-
+    private static final Sort CREATION_ORDER = Sort.by("createdAt", "id");
     private final PokemonRepository pokemonRepository;
     private final TeamRepository teamRepository;
     private final TeamMapper teamMapper;
@@ -43,6 +47,11 @@ public class TeamService {
                 .orElseThrow(() -> new TeamNotFoundException(id));
         team.update(request.name(), request.speciesClause(), findMembers(request.pokedexNumbers()));
         return teamMapper.toResponse(team);
+    }
+
+    public PageResponse<TeamResponse> findAll(int page, int size) {
+        Page<Team> teams = teamRepository.findAll(PageRequest.of(page, size, CREATION_ORDER));
+        return PageResponse.from(teams.map(teamMapper::toResponse));
     }
 
     private List<Pokemon> findMembers(List<Integer> pokedexNumbers) {
