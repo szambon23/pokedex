@@ -12,6 +12,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ProblemDetail;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -103,5 +104,21 @@ public class TeamController {
             @RequestParam(defaultValue = "20") @Min(value = 1, message = "must be at least 1")
             @Max(value = 100, message = "must be at most 100") int size) {
         return teamService.findAll(page, size);
+    }
+
+    @Operation(operationId = "deleteTeam", summary = "Delete a team")
+    @ApiResponses({
+            @ApiResponse(responseCode = "204", description = "The team was deleted."),
+            @ApiResponse(responseCode = "400", description = "IThe id is not a valid UUID",
+                    content = @Content(mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class))),
+            @ApiResponse(responseCode = "404", description = "No team exists with that id.",
+                    content = @Content(mediaType = "application/problem+json",
+                            schema = @Schema(implementation = ProblemDetail.class)))
+    })
+    @DeleteMapping("/{id}")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void delete(@PathVariable UUID id) {
+        teamService.delete(id);
     }
 }

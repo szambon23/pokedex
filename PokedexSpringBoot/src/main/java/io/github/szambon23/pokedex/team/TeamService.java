@@ -49,6 +49,14 @@ public class TeamService {
         return teamMapper.toResponse(team);
     }
 
+    @Transactional
+    public void delete(UUID id) {
+        Team team = teamRepository.findById(id)
+                .orElseThrow(() -> new TeamNotFoundException(id));
+        teamRepository.delete(team);
+    }
+
+
     public PageResponse<TeamResponse> findAll(int page, int size) {
         Page<Team> teams = teamRepository.findAll(PageRequest.of(page, size, CREATION_ORDER));
         return PageResponse.from(teams.map(teamMapper::toResponse));
