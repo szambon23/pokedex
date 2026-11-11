@@ -2,7 +2,7 @@
 
 Blocks are listed in the order they're being built: backend blocks are numbered, frontend (Angular) blocks are lettered.
 
-**Progress: 9 / 17 blocks**
+**Progress: 13 / 17 blocks**
 
 ✅ Done · 🔜 Next · ⬜ Pending
 
