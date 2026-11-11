@@ -1,20 +1,21 @@
 package io.github.szambon23.pokedex.team;
 
+import io.github.szambon23.pokedex.TestcontainersConfiguration;
 import io.github.szambon23.pokedex.pokemon.BaseStats;
 import io.github.szambon23.pokedex.pokemon.Pokemon;
 import io.github.szambon23.pokedex.pokemon.PokemonMapper;
+import io.github.szambon23.pokedex.pokemon.PokemonRepository;
 import io.github.szambon23.pokedex.shared.PageResponse;
 import io.github.szambon23.pokedex.team.dto.TeamRequest;
+import io.github.szambon23.pokedex.team.dto.TeamResponse;
 import io.github.szambon23.pokedex.type.Type;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest;
 import org.springframework.boot.jdbc.test.autoconfigure.AutoConfigureTestDatabase;
 import org.springframework.boot.jpa.test.autoconfigure.TestEntityManager;
 import org.springframework.context.annotation.Import;
-import io.github.szambon23.pokedex.TestcontainersConfiguration;
-import io.github.szambon23.pokedex.team.dto.TeamResponse;
-import org.junit.jupiter.api.Test;
 
 import java.util.List;
 import java.util.UUID;
@@ -31,10 +32,17 @@ class TeamServiceTest {
     private TeamService teamService;
 
     @Autowired
+    private PokemonRepository pokemonRepository;
+
+    @Autowired
     private TeamRepository teamRepository;
 
     @Autowired
     private TestEntityManager entityManager;
+
+    private static BaseStats stats() {
+        return new BaseStats(50, 50, 50, 50, 50, 50);
+    }
 
     @BeforeEach
     void setUp() {
@@ -115,23 +123,38 @@ class TeamServiceTest {
 
     @Test
     void findAllReturnsTeamsInCreationOrder() {
-        TeamResponse first = teamService.create(new TeamRequest("team1", false, List.of())),
-        second = teamService.create(new TeamRequest("team2", false, List.of())),
-        third = teamService.create(new TeamRequest("team3", false, List.of()));
-
+        teamService.create(new TeamRequest("Charlie", false, List.of()));
+        entityManager.flush();
+        teamService.create(new TeamRequest("Alpha", false, List.of()));
+        entityManager.flush();
+        teamService.create(new TeamRequest("Bravo", false, List.of()));
         entityManager.flush();
         entityManager.clear();
 
-        PageResponse<TeamResponse> page1 = teamService.findAll(0, 2);
-        PageResponse<TeamResponse> page2 = teamService.findAll(1, 2);
+        PageResponse<TeamResponse> firstPage = teamService.findAll(0, 2);
+        PageResponse<TeamResponse> secondPage = teamService.findAll(1, 2);
 
-        assertThat(page1.content()).extracting(TeamResponse::name).containsExactly("team1", "team2");
-        assertThat(page1.totalElements()).isEqualTo(3);
-
-        assertThat(page2.content()).extracting(TeamResponse::name).containsExactly("team3");
+        assertThat(firstPage.content()).extracting(TeamResponse::name).containsExactly("Charlie", "Alpha");
+        assertThat(firstPage.totalElements()).isEqualTo(3);
+        assertThat(secondPage.content()).extracting(TeamResponse::name).containsExactly("Bravo");
     }
 
-    private static BaseStats stats() {
-        return new BaseStats(50, 50, 50, 50, 50, 50);
+    @Test
+    void deleteRemovesTeamButKeepsPokemon() {
+        TeamResponse created = teamService.create(new TeamRequest("Kanto starters", false, List.of(1, 4, 7)));
+        entityManager.flush();
+        entityManager.clear();
+
+        teamService.delete(created.id());
+        entityManager.flush();
+        entityManager.clear();
+
+        assertThat(teamRepository.findById(created.id())).isEmpty();
+        assertThat(pokemonRepository.count()).isEqualTo(3);
+    }
+
+    @Test
+    void deleteThrowsWhenTeamDoesNotExist() {
+        assertThatThrownBy(() -> teamService.delete(UUID.fromString("00000000-0000-0000-0000-000000000000"))).isInstanceOf(TeamNotFoundException.class);
     }
 }

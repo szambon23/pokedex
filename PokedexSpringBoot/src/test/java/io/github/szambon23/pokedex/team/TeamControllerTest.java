@@ -24,8 +24,7 @@ import java.util.UUID;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
-import static org.mockito.Mockito.verifyNoInteractions;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @WebMvcTest(TeamController.class)
 class TeamControllerTest {
@@ -234,4 +233,29 @@ class TeamControllerTest {
         assertThat(result).bodyJson().extractingPath("$.detail").isEqualTo(detail);
         verifyNoInteractions(teamService);
     }
+
+    @Test
+    void deleteReturns204() {
+        UUID id = UUID.fromString("3f2b8c1e-6d4a-4b7e-9c2f-1a5d8e7b6c40");
+
+        MvcTestResult result = mvc.delete().uri("/api/v1/teams/{id}", id).exchange();
+
+        assertThat(result).hasStatus(HttpStatus.NO_CONTENT);
+        assertThat(result.getResponse().getContentAsByteArray()).isEmpty();
+        verify(teamService).delete(id);
+    }
+
+    @Test
+    void deleteReturns404WhenTeamDoesNotExist() {
+        UUID id = UUID.fromString("00000000-0000-0000-0000-000000000000");
+        doThrow(new TeamNotFoundException(id)).when(teamService).delete(id);
+
+        MvcTestResult result = mvc.delete().uri("/api/v1/teams/{id}", id).exchange();
+
+        assertThat(result).hasStatus(HttpStatus.NOT_FOUND);
+        assertThat(result).bodyJson().extractingPath("$.teamId").isEqualTo(id.toString());
+    }
+
+
+
 }
