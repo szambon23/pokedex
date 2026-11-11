@@ -66,21 +66,6 @@ public class Team {
         return members.stream().anyMatch(member -> member.getPokedexNumber() == pokemon.getPokedexNumber());
     }
 
-    private List<Integer> duplicatedPokedexNumbers() {
-        Set<Integer> seen = new HashSet<>();
-        Set<Integer> duplicated = new TreeSet<>();
-        for (Pokemon member : members) {
-            if (!seen.add(member.getPokedexNumber())) {
-                duplicated.add(member.getPokedexNumber());
-            }
-        }
-        return List.copyOf(duplicated);
-    }
-
-    public void disableSpeciesClause() {
-        this.speciesClause = false;
-    }
-
     public List<Pokemon> getMembers() {
         return Collections.unmodifiableList(members);
     }

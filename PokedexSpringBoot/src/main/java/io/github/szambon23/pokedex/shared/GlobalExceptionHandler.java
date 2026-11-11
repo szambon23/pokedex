@@ -2,7 +2,6 @@ package io.github.szambon23.pokedex.shared;
 
 import io.github.szambon23.pokedex.pokemon.PokemonNotFoundException;
 import io.github.szambon23.pokedex.team.DuplicateSpeciesException;
-import io.github.szambon23.pokedex.team.SpeciesClauseViolationException;
 import io.github.szambon23.pokedex.team.TeamFullException;
 import io.github.szambon23.pokedex.team.TeamNotFoundException;
 import io.github.szambon23.pokedex.team.UnknownPokemonException;
@@ -100,16 +99,6 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
         problem.setProperty("maxMembers", ex.getMaxMembers());
         return problem;
     }
-
-    @ExceptionHandler(SpeciesClauseViolationException.class)
-    public ProblemDetail handleSpeciesClauseViolation(SpeciesClauseViolationException ex) {
-        ProblemDetail problem = ProblemDetail.forStatusAndDetail(HttpStatus.UNPROCESSABLE_CONTENT, ex.getMessage());
-        problem.setTitle("Species Clause violation");
-        problem.setProperty("duplicatedPokedexNumbers", ex.getDuplicatedPokedexNumbers());
-        return problem;
-    }
-
-    // --- 400: overrides of Spring's default handlers ---
 
     @Override
     protected ResponseEntity<Object> handleHandlerMethodValidationException(
