@@ -3,7 +3,7 @@ import { TeamsService } from '../../api/services';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { TeamResponse } from '../../api/models';
 import { RouterLink } from '@angular/router';
-import { MAX_TEAM_MEMBERS } from './team-rules';
+import { MAX_TEAM_MEMBERS } from '../team-rules';
 
 @Component({
   imports: [RouterLink],
@@ -11,6 +11,7 @@ import { MAX_TEAM_MEMBERS } from './team-rules';
   styleUrl: './team-list.css',
   templateUrl: './team-list.html',
 })
+
 export class TeamList {
   private readonly teamsService = inject(TeamsService);
   readonly maxMembers = MAX_TEAM_MEMBERS;

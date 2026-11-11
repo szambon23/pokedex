@@ -1,4 +1,4 @@
-import { Component, computed, effect, inject, input, numberAttribute, signal, Type } from '@angular/core';
+import { Component, computed, effect, inject, input, numberAttribute, output, signal, Type } from '@angular/core';
 import { rxResource, takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { PokemonService } from '../../api/services/pokemon.service';
 import { PokedexNumberPipe } from '../pokedex-number-pipe';
@@ -6,7 +6,7 @@ import { Router, RouterLink, Params} from '@angular/router';
 import { PokemonCard } from '../pokemon-card/pokemon-card';   // ← 1: TypeScript conoce la clase
 import { TypesService } from '../../api/services';
 import { debounceTime, distinctUntilChanged, Subject } from 'rxjs';
-import { StatsResponse } from '../../api/models';
+import { PokemonSummary, StatsResponse } from '../../api/models';
 
 @Component({
   imports: [PokemonCard, RouterLink],                          // ← 2: el template puede usar la etiqueta
@@ -39,6 +39,8 @@ export class PokemonList {
   readonly type = input<string>();
   readonly sort = input<string>();
   protected readonly nameInput$ = new Subject<string>();
+  readonly selectable = input(false);                  // por defecto, la Pokédex de siempre
+  readonly pokemonSelected = output<PokemonSummary>();
 
   private static readonly STAT_KEYS: (keyof StatsResponse)[] =
   ['hp', 'attack', 'defense', 'specialAttack', 'specialDefense', 'speed'];

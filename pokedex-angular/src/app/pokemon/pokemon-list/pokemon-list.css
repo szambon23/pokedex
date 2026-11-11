@@ -4,7 +4,6 @@
   gap: 1rem;
 }
 
-/* El <a> que envuelve cada tarjeta: sin estilo de link */
 .pokemon-grid a {
   text-decoration: none;
   color: inherit;
@@ -22,4 +21,22 @@
   display: flex;
   gap: 8px;
   margin-bottom: 1.5rem;
+}
+
+.card-button {
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: inherit;
+  cursor: pointer;
+}
+
+.card-button:focus-visible {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+  border-radius: 0.5rem;
 }
