@@ -2,7 +2,7 @@
 
 Blocks are listed in the order they're being built: backend blocks are numbered, frontend (Angular) blocks are lettered.
 
-**Progress: 9 / 17 blocks**
+**Progress: 13 / 17 blocks**
 
 ✅ Done · 🔜 Next · ⬜ Pending
 
@@ -20,10 +20,11 @@ Blocks are listed in the order they're being built: backend blocks are numbered,
 | B | Pagination | Frontend | Pagination controls for the full list | ✅ |
 | 8 | Search & filters | Backend | Search filters, V2 migration (generation), `GET /types`, sort-field whitelist | ✅ |
 | C | Search UI | Frontend | Filters and search in the list | ✅ |
-| 10 | Teams | Backend | Teams of up to 6 Pokémon, `POST` returns 201 + `Location` | 🔜 |
-| D | Teams UI | Frontend | Create and view teams | ⬜ |
+| 10 | Teams | Backend | Teams of up to 6 Pokémon with an optional Species Clause. CRUD: `POST` (201 + `Location`), `GET` by id, paginated `GET` in creation order, `PUT` (full replace), `DELETE` (204) | ✅ |
+| D | Teams UI | Frontend | Team builder: 6 slots, local draft with a single save, reuses the search bar and cards | 🔜 |
 | 11 | Performance | Backend | N+1 in the list, indexes, caching | ⬜ |
 | 12 | Security | Backend | Security, CORS, protect Swagger in production | ⬜ |
+| E | Visual design | Frontend | Visual polish across all screens, stat bars | ⬜ |
 | 13 | Delivery | DevOps | Docker image, GitHub Actions, README | ⬜ |
 
 ## Known issues
@@ -38,3 +39,7 @@ Pending items, each linked to the block that fixes it.
 | Swagger UI is public | 12 |
 |An invalid sort in the URL shows a generic error instead of the API’s message| D |
 | No frontend tests | — |
+| N+1 queries when listing teams | 11 |
+| Teams have no owner: anyone can edit or delete any team | 12 |
+| Concurrent saves of the same team: the last one wins (no optimistic locking) | — |
+| `createdAt` uses `Instant.now()`: ordering tests depend on real time passing | — |
