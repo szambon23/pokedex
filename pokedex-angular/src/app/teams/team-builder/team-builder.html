@@ -20,6 +20,8 @@
       <input
         #clauseBox
         type="checkbox"
+        role="switch"
+        class="switch"
         [checked]="speciesClause()"
         (change)="speciesClause.set(clauseBox.checked)"
       />
@@ -33,6 +35,7 @@
             <button
               type="button"
               class="slot-button"
+              [class.duplicate]="numbersBreakingClause().has(slot.pokedexNumber)"
               (click)="removeMember($index)"
               [title]="'Remove ' + slot.name"
             >
@@ -48,6 +51,13 @@
         </li>
       }
     </ol>
+
+    @if (breaksSpeciesClause()) {
+      <p class="warning">
+        Repeated species: {{ duplicatedNames().join(', ') | titlecase }}.
+        In order to save team, please remove one of each, or turn off the Species Clause.
+      </p>
+    }
 
     @if (saveError(); as message) {
       <p class="error">{{ message }}</p>

@@ -2,7 +2,7 @@
 
 Blocks are listed in the order they're being built: backend blocks are numbered, frontend (Angular) blocks are lettered.
 
-**Progress: 13 / 17 blocks**
+**Progress: 13 / 20 blocks**
 
 ✅ Done · 🔜 Next · ⬜ Pending
 
@@ -26,6 +26,8 @@ Blocks are listed in the order they're being built: backend blocks are numbered,
 | 12 | Security | Backend | Security, CORS, protect Swagger in production | ⬜ |
 | E | Visual design | Frontend | Visual polish across all screens, stat bars | ⬜ |
 | 13 | Delivery | DevOps | Docker image, GitHub Actions, README | ⬜ |
+| 14 | Encounter locations | Backend | imports encounters location and exposes it | ⬜ |
+| F | Visual design | Frontend | Visual polish across all screens, stat bars | ⬜ |
 
 ## Known issues
 
