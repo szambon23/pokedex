@@ -1,0 +1,42 @@
+<header>
+  <h1>Teams</h1>
+  <a routerLink="/teams/new">New team</a>
+</header>
+
+@if (deleteError(); as message) {
+  <p class="error">{{ message }}</p>
+}
+
+@if (teams.hasValue()) {
+  @for (team of teams.value().content; track team.id) {
+    <article class="team">
+      <header class="team-header">
+        <a [routerLink]="['/teams', team.id]">{{ team.name }}</a>
+        @if (team.speciesClause) {
+          <span class="badge">Species Clause</span>
+        }
+      </header>
+
+      <div class="team-members">
+        @for (member of team.members; track $index) {
+          @if (member.spriteUrl) {
+            <img [src]="member.spriteUrl" [alt]="member.name" />
+          } @else {
+            <span class="no-sprite" [title]="member.name">?</span>
+          }
+        }
+      </div>
+
+      <footer class="team-footer">
+        <span>{{ team.members.length }} / {{ maxMembers }}</span>
+        <button type="button" (click)="deleteTeam(team)">Delete</button>
+      </footer>
+    </article>
+  } @empty {
+    <p>No teams yet.</p>
+  }
+} @else if (teams.isLoading()) {
+  <p>Loading…</p>
+} @else if (teams.error()) {
+  <p>Could not load teams.</p>
+}

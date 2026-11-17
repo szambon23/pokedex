@@ -1,0 +1,78 @@
+<h1>{{ id() ? 'Edit team' : 'New team' }}</h1>
+
+@if (team.error()) {
+  <p>Team not found.</p>
+  <a routerLink="/teams">Back to teams</a>
+} @else if (team.isLoading()) {
+  <p>Loading team…</p>
+} @else {
+  <section class="draft">
+    <input
+      #nameField
+      type="text"
+      maxlength="50"
+      placeholder="Team name"
+      [value]="teamName()"
+      (input)="teamName.set(nameField.value)"
+    />
+
+    <label class="clause">
+      <input
+        #clauseBox
+        type="checkbox"
+        role="switch"
+        class="switch"
+        [checked]="speciesClause()"
+        (change)="speciesClause.set(clauseBox.checked)"
+      />
+      Species Clause
+    </label>
+
+    <ol class="slots">
+      @for (slot of slots(); track $index) {
+        <li>
+          @if (slot) {
+            <button
+              type="button"
+              class="slot-button"
+              [class.duplicate]="numbersBreakingClause().has(slot.pokedexNumber)"
+              (click)="removeMember($index)"
+              [title]="'Remove ' + slot.name"
+            >
+              @if (slot.spriteUrl) {
+                <img [src]="slot.spriteUrl" [alt]="slot.name" />
+              } @else {
+                <span class="no-sprite">?</span>
+              }
+            </button>
+          } @else {
+            <span class="empty-slot">+</span>
+          }
+        </li>
+      }
+    </ol>
+
+    <app-team-analysis [members]="members()" />
+
+    @if (breaksSpeciesClause()) {
+      <p class="warning">
+        Repeated species: {{ duplicatedNames().join(', ') | titlecase }}.
+        In order to save team, please remove one of each, or turn off the Species Clause.
+      </p>
+    }
+
+    @if (saveError(); as message) {
+      <p class="error">{{ message }}</p>
+    }
+    <button type="button" (click)="save()" [disabled]="!canSave()">Save</button>
+  </section>
+
+  <app-pokemon-list
+    [selectable]="true"
+    [page]="page()"
+    [name]="name()"
+    [type]="type()"
+    [sort]="sort()"
+    (pokemonSelected)="addMember($event)"
+  />
+}

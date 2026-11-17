@@ -1,0 +1,51 @@
+@if (members().length === 0) {
+  <p class="empty">Add Pokémon to see the analysis.</p>
+} @else {
+  <section class="analysis">
+    <h2>Team analysis</h2>
+
+    <div class="summary">
+      <div class="stat">
+        <span class="stat-value">{{ coveredTypes().length }}/18</span>
+        <span class="stat-label">STAB coverage</span>
+      </div>
+      <div class="stat" [class.stat-warning]="sharedWeaknesses().length > 0">
+        <span class="stat-value">{{ sharedWeaknesses().length }}</span>
+        <span class="stat-label">Shared weaknesses</span>
+      </div>
+    </div>
+
+    <h3>Hits super-effectively</h3>
+    <div class="type-list">
+      @for (type of coveredTypes(); track type) {
+        <span class="type type-{{ type }}">{{ type }}</span>
+      } @empty {
+        <p class="note">None of the members' types hits anything super-effectively.</p>
+      }
+    </div>
+    <p class="note">Based on the members' own types. Real coverage depends on their moves.</p>
+
+    <h3>Defensive matchups</h3>
+    <table class="matchups">
+      <caption>How many members are weak to, resist or are immune to each attacking type</caption>
+      <thead>
+        <tr>
+          <th scope="col">Attacking type</th>
+          <th scope="col">Weak</th>
+          <th scope="col">Resist</th>
+          <th scope="col">Immune</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of defensiveMatchups(); track row.type) {
+          <tr [class]="'level-' + row.level">
+            <th scope="row"><span class="type type-{{ row.type }}">{{ row.type }}</span></th>
+            <td class="weak">{{ row.weak || '' }}</td>
+            <td class="resist">{{ row.resist || '' }}</td>
+            <td class="immune">{{ row.immune || '' }}</td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </section>
+}

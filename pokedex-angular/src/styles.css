@@ -4,7 +4,6 @@ body {
   margin: 1rem;
 }
 
-/* Número y nombre: se usan en la lista y en el detalle */
 .pokemon-number {
   color: #888;
   font-size: 0.9rem;
@@ -14,14 +13,12 @@ body {
   text-transform: capitalize;
 }
 
-/* Contenedor de tipos: acá va el flex */
 .pokemon-types {
   display: flex;
   gap: 4px;
   justify-content: center;
 }
 
-/* Cada pastilla de tipo */
 .type {
   text-transform: capitalize;
   color: white;

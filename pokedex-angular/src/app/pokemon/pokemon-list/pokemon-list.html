@@ -7,11 +7,12 @@
   </select>
 
   <input
-  #nameInput
-  type="search"
-  placeholder="Search by name"
-  [value]="name() ?? ''"
-  (input)="nameInput$.next(nameInput.value)" />
+    #nameInput
+    type="search"
+    placeholder="Search by name"
+    [value]="name() ?? ''"
+    (input)="nameInput$.next(nameInput.value)"
+  />
 
   <select #sortSelect (change)="search({ sort: sortSelect.value })">
     @for (option of sortOptions; track option.value) {
@@ -21,7 +22,7 @@
     }
   </select>
 
-    @if (hasActiveFilters()) {
+  @if (hasActiveFilters()) {
     <button type="button" (click)="clearFilters()">Clear filters</button>
   }
 </div>
@@ -33,9 +34,15 @@
 } @else {
   <section class="pokemon-grid">
     @for (pokemon of pokemons.value()?.content ?? []; track pokemon.pokedexNumber) {
-      <a [routerLink]="['/pokemon', pokemon.pokedexNumber]">
-        <app-pokemon-card [pokemon]="pokemon" [highlightStat]="highlightedStat()" />
-      </a>
+      @if (selectable()) {
+        <button type="button" class="card-button" (click)="pokemonSelected.emit(pokemon)">
+          <app-pokemon-card [pokemon]="pokemon" [highlightStat]="highlightedStat()" />
+        </button>
+      } @else {
+        <a [routerLink]="['/pokemon', pokemon.pokedexNumber]">
+          <app-pokemon-card [pokemon]="pokemon" [highlightStat]="highlightedStat()" />
+        </a>
+      }
     } @empty {
       <p>No Pokémon available.</p>
     }

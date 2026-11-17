@@ -1,0 +1,66 @@
+:host {
+  display: block;
+  padding: 1rem;
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1rem;
+}
+
+.teams {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(18rem, 1fr));
+  gap: 1rem;
+}
+
+.team {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1rem;
+  border: 1px solid #ddd;
+  border-radius: 0.5rem;
+}
+
+.team-header,
+.team-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.team-members {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 0.25rem;
+  min-height: 3rem;
+}
+
+.team-members img,
+.no-sprite {
+  width: 100%;
+  aspect-ratio: 1;
+  object-fit: contain;
+}
+
+.no-sprite {
+  display: grid;
+  place-items: center;
+  background: #f0f0f0;
+  border-radius: 50%;
+}
+
+.badge {
+  font-size: 0.75rem;
+  padding: 0.125rem 0.5rem;
+  border-radius: 999px;
+  background: #eee;
+}
+
+.error {
+  color: #b00020;
+}
