@@ -52,6 +52,8 @@
       }
     </ol>
 
+    <app-team-analysis [members]="members()" />
+
     @if (breaksSpeciesClause()) {
       <p class="warning">
         Repeated species: {{ duplicatedNames().join(', ') | titlecase }}.

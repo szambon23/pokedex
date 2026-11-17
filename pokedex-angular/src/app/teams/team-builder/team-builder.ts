@@ -7,9 +7,10 @@ import { PokemonSummary, TeamRequest } from '../../api/models';
 import { PokemonList } from '../../pokemon/pokemon-list/pokemon-list';
 import { MAX_TEAM_MEMBERS } from '../team-rules';
 import { TitleCasePipe } from '@angular/common';
+import { TeamAnalysis } from '../team-analysis/team-analysis';
 
 @Component({
-  imports: [PokemonList, RouterLink, TitleCasePipe],
+  imports: [PokemonList, RouterLink, TitleCasePipe, TeamAnalysis],
   selector: 'app-team-builder',
   styleUrl: './team-builder.css',
   templateUrl: './team-builder.html',
