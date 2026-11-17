@@ -112,8 +112,22 @@ export class TeamBuilder {
       next: () => this.router.navigate(['/teams']),
       error: (err: HttpErrorResponse) => {
         this.saving.set(false);
-        this.saveError.set(err.error?.detail ?? 'Could not save the team.');
+        this.saveError.set(this.saveErrorMessage(err));
       },
     });
+  }
+
+  private saveErrorMessage(err: HttpErrorResponse): string {
+    switch (err.status) {
+      case 0:
+        return 'Could not reach the server. Check that the backend is running.';
+      case 400:
+      case 422:
+        return err.error?.detail ?? 'The team could not be saved because it is not valid.';
+      case 404:
+        return 'This team no longer exists. It may have been deleted in another tab.';
+      default:
+        return 'Something went wrong while saving. Please try again.';
+    }
   }
 }
