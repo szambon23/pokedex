@@ -1,6 +1,6 @@
 import { Component, computed, input } from '@angular/core';
 import { PokemonSummary } from '../../api/models';
-import { effectiveness, TYPE_NAMES, TypeName } from '../../pokemon/type-chart';
+import { effectiveness, multiplier, TYPE_NAMES, TypeName } from '../../pokemon/type-chart';
 
 type MatchupLevel = 'ok' | 'warning' | 'alert';
 
@@ -38,9 +38,15 @@ export class TeamAnalysis {
     }),
   );
 
-  readonly coveredTypes = computed<TypeName[]>(() => ({
-  
-}));
+  readonly coveredTypes = computed<TypeName[]>(() => {
+    const ownTypes = [...new Set(this.members().flatMap((member) => member.types))];
+    return TYPE_NAMES.filter((defending) => ownTypes.some((own) => multiplier(own, defending) > 1));
+  });
+
+  readonly sharedWeaknesses = computed(() =>
+  this.defensiveMatchups().filter((row) => row.level !== 'ok'),
+);
+
 
 
 }
